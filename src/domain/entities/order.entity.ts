@@ -1,83 +1,83 @@
-import { OrderStatusEnum } from "../enum/order-status.enum";
-import { BaseEntity } from "./base.entity";
-import { UserTypeEnum } from "../enum/user.enum";
+import { OrderStatusEnum } from '../enum/order-status.enum';
+import { BaseEntity } from './base.entity';
+import { UserTypeEnum } from '../enum/user.enum';
 
 export class OrderEntity extends BaseEntity {
-    private _productId: string;
-    private _productQuantity: number;
-    private _shippingCost: number;
-    private _totalPrice: number;
-    private _status: OrderStatusEnum;
-    private _sellerId: string;
-    private _sellerType: UserTypeEnum;
-    private _buyerId: string;
+  private _productId: string;
+  private _productQuantity: number;
+  private _shippingCost: number;
+  private _totalPrice: number;
+  private _status: OrderStatusEnum;
+  private _sellerId: string;
+  private _sellerType: UserTypeEnum;
+  private _buyerId: string;
 
-    constructor(order: Partial<OrderEntity>) {
-        super(order);
-        Object.assign(this, order);
-    }
+  constructor(order: Partial<OrderEntity>) {
+    super(order);
+    Object.assign(this, order);
+  }
 
-    get productId(): string {
-        return this._productId;
-    }
+  get productId(): string {
+    return this._productId;
+  }
 
-    get productQuantity(): number {
-        return this._productQuantity;
-    }
+  get productQuantity(): number {
+    return this._productQuantity;
+  }
 
-    get shippingCost(): number {
-        return this._shippingCost;
-    }
+  get shippingCost(): number {
+    return this._shippingCost;
+  }
 
-    get totalPrice(): number {
-        return this._totalPrice;
-    }
+  get totalPrice(): number {
+    return this._totalPrice;
+  }
 
-    get status(): OrderStatusEnum {
-        return this._status;
-    }
-    
-    get sellerId(): string {
-        return this._sellerId;
-    }
+  get status(): OrderStatusEnum {
+    return this._status;
+  }
 
-    get sellerType(): UserTypeEnum {
-        return this._sellerType;
-    }
+  get sellerId(): string {
+    return this._sellerId;
+  }
 
-    get buyerId(): string {
-        return this._buyerId;
-    }
+  get sellerType(): UserTypeEnum {
+    return this._sellerType;
+  }
 
-    set productId(productId: string) {
-        this._productId = productId;
-    }
+  get buyerId(): string {
+    return this._buyerId;
+  }
 
-    set productQuantity(productQuantity: number) {
-        this._productQuantity = productQuantity;
-    }
+  set productId(productId: string) {
+    this._productId = productId;
+  }
 
-    set shippingCost(shippingCost: number) {
-        this._shippingCost = shippingCost;
-    }
+  set productQuantity(productQuantity: number) {
+    this._productQuantity = productQuantity;
+  }
 
-    set totalPrice(totalPrice: number) {
-        this._totalPrice = totalPrice;
-    }
+  set shippingCost(shippingCost: number) {
+    this._shippingCost = shippingCost;
+  }
 
-    set status(status: OrderStatusEnum) {
-        this._status = status;
-    }
-    
-    set sellerId(sellerId: string) {
-        this._sellerId = sellerId;
-    }
+  set totalPrice(totalPrice: number) {
+    this._totalPrice = totalPrice;
+  }
 
-    set sellerType(sellerType: UserTypeEnum) {
-        this._sellerType = sellerType;
-    }
+  set status(status: OrderStatusEnum) {
+    this._status = status;
+  }
 
-    set buyerId(buyerId: string) {
-        this._buyerId = buyerId;
-    }
+  set sellerId(sellerId: string) {
+    this._sellerId = sellerId;
+  }
+
+  set sellerType(sellerType: UserTypeEnum) {
+    this._sellerType = sellerType;
+  }
+
+  set buyerId(buyerId: string) {
+    this._buyerId = buyerId;
+  }
 }

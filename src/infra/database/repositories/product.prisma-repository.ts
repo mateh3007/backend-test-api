@@ -2,13 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { Product as PrismaProduct, Prisma } from '@prisma/client';
 import { ProductEntity } from '../../../domain/entities';
 import { CategoryEnum, UserTypeEnum } from '../../../domain/enum';
-import { IProductRepositoryFilter, ProductRepository } from '../../../domain/repositories';
+import {
+  IProductRepositoryFilter,
+  ProductRepository,
+} from '../../../domain/repositories';
 import { PrismaService } from '../prisma/prisma.service';
 import { BasePrismaRepository } from './base.prisma-repository';
 
 @Injectable()
 export class ProductPrismaRepository
-  extends BasePrismaRepository<ProductEntity, PrismaProduct, Prisma.ProductDelegate>
+  extends BasePrismaRepository<ProductEntity, PrismaProduct>
   implements ProductRepository
 {
   constructor(prisma: PrismaService) {
@@ -31,7 +34,7 @@ export class ProductPrismaRepository
     return product;
   }
 
-  protected toPrisma(entity: ProductEntity): Prisma.ProductUncheckedCreateInput & { id?: string } {
+  protected toPrisma(entity: ProductEntity): Record<string, unknown> {
     return {
       id: entity._id,
       name: entity.name,
@@ -45,7 +48,9 @@ export class ProductPrismaRepository
     };
   }
 
-  async findByFilter(filter: IProductRepositoryFilter): Promise<ProductEntity[]> {
+  async findByFilter(
+    filter: IProductRepositoryFilter,
+  ): Promise<ProductEntity[]> {
     const where: Prisma.ProductWhereInput = {};
     const orderBy: Prisma.ProductOrderByWithRelationInput = {};
 
@@ -55,7 +60,8 @@ export class ProductPrismaRepository
     if (filter.category) where.category = filter.category;
     if (filter.sellerId) where.sellerId = filter.sellerId;
     if (filter.sellerType) where.sellerType = filter.sellerType;
-    if (filter.freeShipping !== undefined) where.freeShipping = filter.freeShipping;
+    if (filter.freeShipping !== undefined)
+      where.freeShipping = filter.freeShipping;
 
     if (filter.price) {
       where.price = {};
@@ -76,7 +82,9 @@ export class ProductPrismaRepository
     }
 
     if (filter.sort) {
-      orderBy[filter.sort.field as keyof Prisma.ProductOrderByWithRelationInput] = filter.sort.order;
+      orderBy[
+        filter.sort.field as keyof Prisma.ProductOrderByWithRelationInput
+      ] = filter.sort.order;
     }
 
     const results = await this.prisma.product.findMany({
@@ -89,4 +97,3 @@ export class ProductPrismaRepository
     return results.map((result) => this.toDomain(result));
   }
 }
-

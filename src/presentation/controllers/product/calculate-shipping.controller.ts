@@ -7,7 +7,9 @@ import { ICalculateShippingOutput } from '../../../domain/interfaces';
 
 @Controller('products')
 export class CalculateShippingController extends BaseController {
-  constructor(private readonly calculateShippingUseCase: CalculateShippingUseCase) {
+  constructor(
+    private readonly calculateShippingUseCase: CalculateShippingUseCase,
+  ) {
     super();
   }
 
@@ -24,4 +26,3 @@ export class CalculateShippingController extends BaseController {
     return this.success(result);
   }
 }
-

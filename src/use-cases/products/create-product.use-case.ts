@@ -1,12 +1,18 @@
-import { CacheAdapter } from "../../domain/adapters";
-import { ProductEntity } from "../../domain/entities";
-import { ICreateProductInput, ICreateProductOutput } from "../../domain/interfaces";
-import { ProductRepository } from "../../domain/repositories";
-import { BaseUseCase } from "../base.use-case";
+import { CacheAdapter } from '../../domain/adapters';
+import { ProductEntity } from '../../domain/entities';
+import {
+  ICreateProductInput,
+  ICreateProductOutput,
+} from '../../domain/interfaces';
+import { ProductRepository } from '../../domain/repositories';
+import { BaseUseCase } from '../base.use-case';
 
 const PRODUCTS_LIST_CACHE_PREFIX = 'products:list:';
 
-export class CreateProductUseCase extends BaseUseCase<ICreateProductInput, ICreateProductOutput> {
+export class CreateProductUseCase extends BaseUseCase<
+  ICreateProductInput,
+  ICreateProductOutput
+> {
   constructor(
     private readonly productRepository: ProductRepository,
     private readonly cacheAdapter: CacheAdapter,

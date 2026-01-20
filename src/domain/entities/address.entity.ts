@@ -1,91 +1,91 @@
-import { AddressableEnum } from "../enum/addressable.enum";
-import { BaseEntity } from "./base.entity";
+import { AddressableEnum } from '../enum/addressable.enum';
+import { BaseEntity } from './base.entity';
 
 export class AddressEntity extends BaseEntity {
-    private _country: string;
-    private _state: string;
-    private _city: string;
-    private _street: string;
-    private _number: string;
-    private _complement?: string;
-    private _zipCode: string;
-    private _addressableId: string;
-    private _addressableType: AddressableEnum;
+  private _country: string;
+  private _state: string;
+  private _city: string;
+  private _street: string;
+  private _number: string;
+  private _complement?: string;
+  private _zipCode: string;
+  private _addressableId: string;
+  private _addressableType: AddressableEnum;
 
-    constructor(address: Partial<AddressEntity>) {
-        super(address);
-        Object.assign(this, address);
-    }
+  constructor(address: Partial<AddressEntity>) {
+    super(address);
+    Object.assign(this, address);
+  }
 
-    get country(): string {
-        return this._country;
-    }
-    
-    get state(): string {
-        return this._state;
-    }
+  get country(): string {
+    return this._country;
+  }
 
-    get city(): string {
-        return this._city;
-    }
+  get state(): string {
+    return this._state;
+  }
 
-    get street(): string {
-        return this._street;
-    }
-    
-    get number(): string {
-        return this._number;
-    }
+  get city(): string {
+    return this._city;
+  }
 
-    get complement(): string | undefined {
-        return this._complement;
-    }
+  get street(): string {
+    return this._street;
+  }
 
-    get zipCode(): string {
-        return this._zipCode;
-    }   
+  get number(): string {
+    return this._number;
+  }
 
-    get addressableId(): string {
-        return this._addressableId;
-    }
+  get complement(): string | undefined {
+    return this._complement;
+  }
 
-    get addressableType(): AddressableEnum {
-        return this._addressableType;
-    }
-    
-    set country(country: string) {
-        this._country = country;
-    }
+  get zipCode(): string {
+    return this._zipCode;
+  }
 
-    set state(state: string) {
-        this._state = state;
-    }
+  get addressableId(): string {
+    return this._addressableId;
+  }
 
-    set city(city: string) {
-        this._city = city;
-    }
+  get addressableType(): AddressableEnum {
+    return this._addressableType;
+  }
 
-    set street(street: string) {
-        this._street = street;
-    }
+  set country(country: string) {
+    this._country = country;
+  }
 
-    set number(number: string) {
-        this._number = number;
-    }
+  set state(state: string) {
+    this._state = state;
+  }
 
-    set complement(complement: string) {
-        this._complement = complement;
-    }
+  set city(city: string) {
+    this._city = city;
+  }
 
-    set zipCode(zipCode: string) {
-        this._zipCode = zipCode;
-    }
+  set street(street: string) {
+    this._street = street;
+  }
 
-    set addressableId(addressableId: string) {
-        this._addressableId = addressableId;
-    }
+  set number(number: string) {
+    this._number = number;
+  }
 
-    set addressableType(addressableType: AddressableEnum) {
-        this._addressableType = addressableType;
-    }
+  set complement(complement: string) {
+    this._complement = complement;
+  }
+
+  set zipCode(zipCode: string) {
+    this._zipCode = zipCode;
+  }
+
+  set addressableId(addressableId: string) {
+    this._addressableId = addressableId;
+  }
+
+  set addressableType(addressableType: AddressableEnum) {
+    this._addressableType = addressableType;
+  }
 }

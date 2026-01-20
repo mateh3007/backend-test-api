@@ -4,4 +4,3 @@ export * from './company.prisma-repository';
 export * from './address.prisma-repository';
 export * from './product.prisma-repository';
 export * from './order.prisma-repository';
-

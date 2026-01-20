@@ -13,9 +13,10 @@ export class ListProductsController extends BaseController {
 
   @Public()
   @Get()
-  async handle(@Query() query: ListProductsQueryDto): Promise<IApiResponse<IListProductsOutput>> {
+  async handle(
+    @Query() query: ListProductsQueryDto,
+  ): Promise<IApiResponse<IListProductsOutput>> {
     const result = await this.listProductsUseCase.execute(query);
     return this.success(result);
   }
 }
-

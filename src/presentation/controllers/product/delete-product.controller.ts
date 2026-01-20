@@ -26,4 +26,3 @@ export class DeleteProductController extends BaseController {
     return this.success(result);
   }
 }
-

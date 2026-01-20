@@ -1,83 +1,83 @@
-import { CategoryEnum } from "../enum/category.enum";
-import { BaseEntity } from "./base.entity";
-import { UserTypeEnum } from "../enum/user.enum";
+import { CategoryEnum } from '../enum/category.enum';
+import { BaseEntity } from './base.entity';
+import { UserTypeEnum } from '../enum/user.enum';
 
 export class ProductEntity extends BaseEntity {
-    private _name: string;
-    private _category: CategoryEnum;
-    private _description: string;
-    private _price: number;
-    private _stock: number;
-    private _freeShipping: boolean;
-    private _sellerId: string;
-    private _sellerType: UserTypeEnum;
-    
-    constructor(product: Partial<ProductEntity>) {
-        super(product); 
-        Object.assign(this, product);
-    }
+  private _name: string;
+  private _category: CategoryEnum;
+  private _description: string;
+  private _price: number;
+  private _stock: number;
+  private _freeShipping: boolean;
+  private _sellerId: string;
+  private _sellerType: UserTypeEnum;
 
-    get name(): string {
-        return this._name;
-    }
-    
-    get category(): CategoryEnum {
-        return this._category;
-    }
+  constructor(product: Partial<ProductEntity>) {
+    super(product);
+    Object.assign(this, product);
+  }
 
-    get description(): string {
-        return this._description;
-    }
+  get name(): string {
+    return this._name;
+  }
 
-    get price(): number {
-        return this._price;
-    }
+  get category(): CategoryEnum {
+    return this._category;
+  }
 
-    get stock(): number {
-        return this._stock;
-    }
+  get description(): string {
+    return this._description;
+  }
 
-    get freeShipping(): boolean {
-        return this._freeShipping;
-    }
+  get price(): number {
+    return this._price;
+  }
 
-    get sellerId(): string {
-        return this._sellerId;
-    }
+  get stock(): number {
+    return this._stock;
+  }
 
-    get sellerType(): UserTypeEnum {
-        return this._sellerType;
-    }
+  get freeShipping(): boolean {
+    return this._freeShipping;
+  }
 
-    set name(name: string) {
-        this._name = name;
-    }
-    
-    set category(category: CategoryEnum) {
-        this._category = category;
-    }
+  get sellerId(): string {
+    return this._sellerId;
+  }
 
-    set description(description: string) {
-        this._description = description;
-    }
-    
-    set price(price: number) {
-        this._price = price;
-    }
+  get sellerType(): UserTypeEnum {
+    return this._sellerType;
+  }
 
-    set stock(stock: number) {
-        this._stock = stock;
-    }
+  set name(name: string) {
+    this._name = name;
+  }
 
-    set freeShipping(freeShipping: boolean) {
-        this._freeShipping = freeShipping;
-    }
+  set category(category: CategoryEnum) {
+    this._category = category;
+  }
 
-    set sellerId(sellerId: string) {
-        this._sellerId = sellerId;
-    }
+  set description(description: string) {
+    this._description = description;
+  }
 
-    set sellerType(sellerType: UserTypeEnum) {
-        this._sellerType = sellerType;
-    }
+  set price(price: number) {
+    this._price = price;
+  }
+
+  set stock(stock: number) {
+    this._stock = stock;
+  }
+
+  set freeShipping(freeShipping: boolean) {
+    this._freeShipping = freeShipping;
+  }
+
+  set sellerId(sellerId: string) {
+    this._sellerId = sellerId;
+  }
+
+  set sellerType(sellerType: UserTypeEnum) {
+    this._sellerType = sellerType;
+  }
 }

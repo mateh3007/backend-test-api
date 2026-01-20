@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { Company as PrismaCompany, Prisma } from '@prisma/client';
 import { CompanyEntity } from '../../../domain/entities';
-import { CompanyRepository, ICompanyRepositoryFilter } from '../../../domain/repositories';
+import {
+  CompanyRepository,
+  ICompanyRepositoryFilter,
+} from '../../../domain/repositories';
 import { PrismaService } from '../prisma/prisma.service';
 import { BasePrismaRepository } from './base.prisma-repository';
 
 @Injectable()
 export class CompanyPrismaRepository
-  extends BasePrismaRepository<CompanyEntity, PrismaCompany, Prisma.CompanyDelegate>
+  extends BasePrismaRepository<CompanyEntity, PrismaCompany>
   implements CompanyRepository
 {
   constructor(prisma: PrismaService) {
@@ -26,7 +29,7 @@ export class CompanyPrismaRepository
     return company;
   }
 
-  protected toPrisma(entity: CompanyEntity): Prisma.CompanyCreateInput & { id?: string } {
+  protected toPrisma(entity: CompanyEntity): Record<string, unknown> {
     return {
       id: entity._id,
       corporateName: entity.corporateName,
@@ -36,11 +39,16 @@ export class CompanyPrismaRepository
     };
   }
 
-  async findByFilter(filter: ICompanyRepositoryFilter): Promise<CompanyEntity[]> {
+  async findByFilter(
+    filter: ICompanyRepositoryFilter,
+  ): Promise<CompanyEntity[]> {
     const where: Prisma.CompanyWhereInput = {};
 
     if (filter.corporateName) {
-      where.corporateName = { contains: filter.corporateName, mode: 'insensitive' };
+      where.corporateName = {
+        contains: filter.corporateName,
+        mode: 'insensitive',
+      };
     }
     if (filter.cnpj) where.cnpj = filter.cnpj;
 
@@ -56,4 +64,3 @@ export class CompanyPrismaRepository
     return result ? this.toDomain(result) : null;
   }
 }
-

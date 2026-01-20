@@ -19,4 +19,3 @@ export class UpdateAddressController extends BaseController {
     return this.success(result);
   }
 }
-

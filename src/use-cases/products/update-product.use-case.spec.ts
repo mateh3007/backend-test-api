@@ -63,7 +63,9 @@ describe('UpdateProductUseCase', () => {
       const result = await useCase.execute(input);
 
       expect(productRepository.findById).toHaveBeenCalledWith('product-123');
-      expect(cacheAdapter.deleteByPattern).toHaveBeenCalledWith('products:list:*');
+      expect(cacheAdapter.deleteByPattern).toHaveBeenCalledWith(
+        'products:list:*',
+      );
       expect(result.name).toBe('iPhone 16');
     });
 

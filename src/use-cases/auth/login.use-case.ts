@@ -1,7 +1,7 @@
-import { BcryptAdapter, JwtAdapter } from "../../domain/adapters";
-import { ILoginInput, ILoginOutput } from "../../domain/interfaces";
-import { UserRepository } from "../../domain/repositories";
-import { BaseUseCase } from "../base.use-case";
+import { BcryptAdapter, JwtAdapter } from '../../domain/adapters';
+import { ILoginInput, ILoginOutput } from '../../domain/interfaces';
+import { UserRepository } from '../../domain/repositories';
+import { BaseUseCase } from '../base.use-case';
 
 export class LoginUseCase extends BaseUseCase<ILoginInput, ILoginOutput> {
   constructor(
@@ -13,7 +13,9 @@ export class LoginUseCase extends BaseUseCase<ILoginInput, ILoginOutput> {
   }
 
   async execute(input: ILoginInput): Promise<ILoginOutput> {
-    const users = await this.userRepository.findByFilter({ email: input.email });
+    const users = await this.userRepository.findByFilter({
+      email: input.email,
+    });
 
     if (users.length === 0) {
       throw new Error('Invalid credentials');
@@ -21,7 +23,10 @@ export class LoginUseCase extends BaseUseCase<ILoginInput, ILoginOutput> {
 
     const user = users[0];
 
-    const isPasswordValid = await this.bcryptAdapter.compare(input.password, user.password);
+    const isPasswordValid = await this.bcryptAdapter.compare(
+      input.password,
+      user.password,
+    );
 
     if (!isPasswordValid) {
       throw new Error('Invalid credentials');
@@ -46,4 +51,3 @@ export class LoginUseCase extends BaseUseCase<ILoginInput, ILoginOutput> {
     };
   }
 }
-

@@ -101,7 +101,9 @@ describe('UpdateUserUseCase', () => {
       userRepository.findById.mockResolvedValue(existingUser);
       userRepository.findByFilter.mockResolvedValue([otherUser]);
 
-      await expect(useCase.execute(input)).rejects.toThrow('Email already in use by another user');
+      await expect(useCase.execute(input)).rejects.toThrow(
+        'Email already in use by another user',
+      );
       expect(userRepository.update).not.toHaveBeenCalled();
     });
 

@@ -1,4 +1,4 @@
 export enum AddressableEnum {
-    COMPANY = 'COMPANY',
-    USER = 'USER'
+  COMPANY = 'COMPANY',
+  USER = 'USER',
 }

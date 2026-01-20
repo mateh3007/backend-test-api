@@ -63,7 +63,9 @@ describe('DeleteProductUseCase', () => {
 
       expect(productRepository.findById).toHaveBeenCalledWith('product-123');
       expect(productRepository.delete).toHaveBeenCalledWith('product-123');
-      expect(cacheAdapter.deleteByPattern).toHaveBeenCalledWith('products:list:*');
+      expect(cacheAdapter.deleteByPattern).toHaveBeenCalledWith(
+        'products:list:*',
+      );
       expect(result.success).toBe(true);
     });
 
@@ -92,7 +94,9 @@ describe('DeleteProductUseCase', () => {
 
       productRepository.findById.mockResolvedValue(product);
 
-      await expect(useCase.execute(input)).rejects.toThrow('You do not have permission to delete this product');
+      await expect(useCase.execute(input)).rejects.toThrow(
+        'You do not have permission to delete this product',
+      );
       expect(productRepository.delete).not.toHaveBeenCalled();
       expect(cacheAdapter.deleteByPattern).not.toHaveBeenCalled();
     });
@@ -108,7 +112,9 @@ describe('DeleteProductUseCase', () => {
 
       productRepository.findById.mockResolvedValue(product);
 
-      await expect(useCase.execute(input)).rejects.toThrow('You do not have permission to delete this product');
+      await expect(useCase.execute(input)).rejects.toThrow(
+        'You do not have permission to delete this product',
+      );
       expect(productRepository.delete).not.toHaveBeenCalled();
       expect(cacheAdapter.deleteByPattern).not.toHaveBeenCalled();
     });
@@ -130,7 +136,9 @@ describe('DeleteProductUseCase', () => {
       const result = await useCase.execute(input);
 
       expect(result.success).toBe(true);
-      expect(cacheAdapter.deleteByPattern).toHaveBeenCalledWith('products:list:*');
+      expect(cacheAdapter.deleteByPattern).toHaveBeenCalledWith(
+        'products:list:*',
+      );
     });
   });
 });

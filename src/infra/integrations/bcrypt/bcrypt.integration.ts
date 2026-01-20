@@ -14,4 +14,3 @@ export class BcryptIntegration extends BcryptAdapter {
     return bcrypt.compare(password, hash);
   }
 }
-

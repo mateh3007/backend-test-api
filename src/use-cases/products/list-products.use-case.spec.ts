@@ -3,14 +3,19 @@ import { CacheAdapter } from '../../domain/adapters';
 import { ProductRepository } from '../../domain/repositories';
 import { ProductEntity } from '../../domain/entities';
 import { CategoryEnum, UserTypeEnum } from '../../domain/enum';
-import { IListProductsInput, IListProductsOutput } from '../../domain/interfaces';
+import {
+  IListProductsInput,
+  IListProductsOutput,
+} from '../../domain/interfaces';
 
 describe('ListProductsUseCase', () => {
   let useCase: ListProductsUseCase;
   let productRepository: jest.Mocked<ProductRepository>;
   let cacheAdapter: jest.Mocked<CacheAdapter>;
 
-  const mockProductEntity = (overrides?: Partial<ProductEntity>): ProductEntity => {
+  const mockProductEntity = (
+    overrides?: Partial<ProductEntity>,
+  ): ProductEntity => {
     const product = new ProductEntity({});
     product._id = 'product-123';
     product.name = 'iPhone 15';

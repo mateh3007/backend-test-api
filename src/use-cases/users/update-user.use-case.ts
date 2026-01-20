@@ -1,9 +1,11 @@
-import { IUpdateUserInput, IUpdateUserOutput } from "../../domain/interfaces";
-import { UserRepository } from "../../domain/repositories";
-import { BaseUseCase } from "../base.use-case";
+import { IUpdateUserInput, IUpdateUserOutput } from '../../domain/interfaces';
+import { UserRepository } from '../../domain/repositories';
+import { BaseUseCase } from '../base.use-case';
 
-
-export class UpdateUserUseCase extends BaseUseCase<IUpdateUserInput, IUpdateUserOutput> {
+export class UpdateUserUseCase extends BaseUseCase<
+  IUpdateUserInput,
+  IUpdateUserOutput
+> {
   constructor(private readonly userRepository: UserRepository) {
     super();
   }
@@ -20,8 +22,10 @@ export class UpdateUserUseCase extends BaseUseCase<IUpdateUserInput, IUpdateUser
     }
 
     if (input.email !== undefined) {
-      const existingUsers = await this.userRepository.findByFilter({ email: input.email });
-      const otherUserWithEmail = existingUsers.find(u => u._id !== input.id);
+      const existingUsers = await this.userRepository.findByFilter({
+        email: input.email,
+      });
+      const otherUserWithEmail = existingUsers.find((u) => u._id !== input.id);
 
       if (otherUserWithEmail) {
         throw new Error('Email already in use by another user');
@@ -60,4 +64,3 @@ export class UpdateUserUseCase extends BaseUseCase<IUpdateUserInput, IUpdateUser
     };
   }
 }
-

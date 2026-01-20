@@ -1,4 +1,10 @@
-import { Body, Controller, ForbiddenException, Param, Patch } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  ForbiddenException,
+  Param,
+  Patch,
+} from '@nestjs/common';
 import { CurrentUser, Roles } from '../../../infra/commons/decorators';
 import { ICurrentUser } from '../../../infra/commons/decorators/current-user.decorator';
 import { RoleEnum } from '../../../domain/enum';
@@ -27,4 +33,3 @@ export class UpdateCompanyController extends BaseController {
     return this.success(result);
   }
 }
-

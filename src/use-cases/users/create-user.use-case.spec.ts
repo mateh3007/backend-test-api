@@ -51,7 +51,9 @@ describe('CreateUserUseCase', () => {
 
       const result = await useCase.execute(input);
 
-      expect(userRepository.findByFilter).toHaveBeenCalledWith({ email: input.email });
+      expect(userRepository.findByFilter).toHaveBeenCalledWith({
+        email: input.email,
+      });
       expect(userRepository.create).toHaveBeenCalled();
       expect(result.name).toBe(input.name);
       expect(result.email).toBe(input.email);
@@ -93,7 +95,9 @@ describe('CreateUserUseCase', () => {
 
       userRepository.findByFilter.mockResolvedValue([mockUserEntity()]);
 
-      await expect(useCase.execute(input)).rejects.toThrow('User with this email already exists');
+      await expect(useCase.execute(input)).rejects.toThrow(
+        'User with this email already exists',
+      );
       expect(userRepository.create).not.toHaveBeenCalled();
     });
 

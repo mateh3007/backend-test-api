@@ -12,16 +12,16 @@ export interface ICreateProductInput {
   sellerType: UserTypeEnum;
 }
 
-export interface ICreateProductOutput extends ICreateProductInput{
+export interface ICreateProductOutput extends ICreateProductInput {
   id: string;
   createdAt: Date;
 }
 
-export interface IUpdateProductInput extends Partial<ICreateProductInput>{
+export interface IUpdateProductInput extends Partial<ICreateProductInput> {
   id: string;
 }
 
-export interface IUpdateProductOutput extends IUpdateProductInput{
+export interface IUpdateProductOutput extends IUpdateProductInput {
   updatedAt: Date;
 }
 

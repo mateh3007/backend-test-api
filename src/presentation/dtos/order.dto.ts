@@ -20,4 +20,3 @@ export class UpdateOrderStatusDto {
   @IsNotEmpty()
   status: OrderStatusEnum;
 }
-

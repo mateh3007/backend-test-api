@@ -12,15 +12,15 @@ export interface ICreateAddressInput {
   addressableType: AddressableEnum;
 }
 
-export interface ICreateAddressOutput extends ICreateAddressInput{
+export interface ICreateAddressOutput extends ICreateAddressInput {
   id: string;
   createdAt: Date;
 }
 
-export interface IUpdateAddressInput extends Partial<ICreateAddressInput>{
+export interface IUpdateAddressInput extends Partial<ICreateAddressInput> {
   id: string;
 }
 
-export interface IUpdateAddressOutput extends IUpdateAddressInput{
+export interface IUpdateAddressOutput extends IUpdateAddressInput {
   updatedAt: Date;
 }

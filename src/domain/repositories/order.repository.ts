@@ -1,11 +1,11 @@
-import { OrderEntity } from "../entities";
-import { OrderStatusEnum } from "../enum";
-import { BaseRepository } from "./base.repository";
+import { OrderEntity } from '../entities';
+import { OrderStatusEnum } from '../enum';
+import { BaseRepository } from './base.repository';
 
 export interface IOrderRepositoryFilter {
-    status?: OrderStatusEnum;
+  status?: OrderStatusEnum;
 }
 
 export abstract class OrderRepository extends BaseRepository<OrderEntity> {
-    abstract findByFilter(filter: IOrderRepositoryFilter): Promise<OrderEntity[]>;
+  abstract findByFilter(filter: IOrderRepositoryFilter): Promise<OrderEntity[]>;
 }

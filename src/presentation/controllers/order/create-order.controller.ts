@@ -28,4 +28,3 @@ export class CreateOrderController extends BaseController {
     return this.created(result);
   }
 }
-

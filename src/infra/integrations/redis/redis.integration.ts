@@ -31,7 +31,8 @@ export class RedisIntegration extends CacheAdapter implements OnModuleDestroy {
   }
 
   async set<T = string>(key: string, value: T, ttl: number): Promise<void> {
-    const serialized = typeof value === 'string' ? value : JSON.stringify(value);
+    const serialized =
+      typeof value === 'string' ? value : JSON.stringify(value);
     await this.client.set(key, serialized, 'EX', ttl);
   }
 
@@ -46,4 +47,3 @@ export class RedisIntegration extends CacheAdapter implements OnModuleDestroy {
     }
   }
 }
-

@@ -1,11 +1,14 @@
-import { BcryptAdapter, JwtAdapter } from "../../domain/adapters";
-import { UserEntity } from "../../domain/entities";
-import { RoleEnum, StepOnboardingEnum } from "../../domain/enum";
-import { IRegisterInput, IRegisterOutput } from "../../domain/interfaces";
-import { UserRepository } from "../../domain/repositories";
-import { BaseUseCase } from "../base.use-case";
+import { BcryptAdapter, JwtAdapter } from '../../domain/adapters';
+import { UserEntity } from '../../domain/entities';
+import { RoleEnum, StepOnboardingEnum } from '../../domain/enum';
+import { IRegisterInput, IRegisterOutput } from '../../domain/interfaces';
+import { UserRepository } from '../../domain/repositories';
+import { BaseUseCase } from '../base.use-case';
 
-export class RegisterUseCase extends BaseUseCase<IRegisterInput, IRegisterOutput> {
+export class RegisterUseCase extends BaseUseCase<
+  IRegisterInput,
+  IRegisterOutput
+> {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly bcryptAdapter: BcryptAdapter,
@@ -15,7 +18,9 @@ export class RegisterUseCase extends BaseUseCase<IRegisterInput, IRegisterOutput
   }
 
   async execute(input: IRegisterInput): Promise<IRegisterOutput> {
-    const existingUsers = await this.userRepository.findByFilter({ email: input.email });
+    const existingUsers = await this.userRepository.findByFilter({
+      email: input.email,
+    });
 
     if (existingUsers.length > 0) {
       throw new Error('User with this email already exists');
@@ -50,4 +55,3 @@ export class RegisterUseCase extends BaseUseCase<IRegisterInput, IRegisterOutput
     };
   }
 }
-

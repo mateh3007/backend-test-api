@@ -1,11 +1,13 @@
-import { OrderEntity } from "../../domain/entities";
-import { OrderStatusEnum } from "../../domain/enum";
-import { ICreateOrderInput, ICreateOrderOutput } from "../../domain/interfaces";
-import { OrderRepository, ProductRepository } from "../../domain/repositories";
-import { BaseUseCase } from "../base.use-case";
+import { OrderEntity } from '../../domain/entities';
+import { OrderStatusEnum } from '../../domain/enum';
+import { ICreateOrderInput, ICreateOrderOutput } from '../../domain/interfaces';
+import { OrderRepository, ProductRepository } from '../../domain/repositories';
+import { BaseUseCase } from '../base.use-case';
 
-
-export class CreateOrderUseCase extends BaseUseCase<ICreateOrderInput, ICreateOrderOutput> {
+export class CreateOrderUseCase extends BaseUseCase<
+  ICreateOrderInput,
+  ICreateOrderOutput
+> {
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly productRepository: ProductRepository,
@@ -24,7 +26,8 @@ export class CreateOrderUseCase extends BaseUseCase<ICreateOrderInput, ICreateOr
       throw new Error('Insufficient stock');
     }
 
-    const totalPrice = (product.price * input.productQuantity) + input.shippingCost;
+    const totalPrice =
+      product.price * input.productQuantity + input.shippingCost;
 
     const order = new OrderEntity({});
     order.productId = input.productId;
@@ -50,4 +53,3 @@ export class CreateOrderUseCase extends BaseUseCase<ICreateOrderInput, ICreateOr
     };
   }
 }
-

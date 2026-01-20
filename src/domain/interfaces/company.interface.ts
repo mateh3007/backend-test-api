@@ -5,15 +5,15 @@ export interface ICreateCompanyInput {
   email: string;
 }
 
-export interface ICreateCompanyOutput extends ICreateCompanyInput{
+export interface ICreateCompanyOutput extends ICreateCompanyInput {
   id: string;
   createdAt: Date;
 }
 
-export interface IUpdateCompanyInput extends Partial<ICreateCompanyInput>{
+export interface IUpdateCompanyInput extends Partial<ICreateCompanyInput> {
   id: string;
 }
 
-export interface IUpdateCompanyOutput extends IUpdateCompanyInput{
+export interface IUpdateCompanyOutput extends IUpdateCompanyInput {
   updatedAt: Date;
 }

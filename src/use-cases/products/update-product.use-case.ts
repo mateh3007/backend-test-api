@@ -1,11 +1,17 @@
-import { CacheAdapter } from "../../domain/adapters";
-import { IUpdateProductInput, IUpdateProductOutput } from "../../domain/interfaces";
-import { ProductRepository } from "../../domain/repositories";
-import { BaseUseCase } from "../base.use-case";
+import { CacheAdapter } from '../../domain/adapters';
+import {
+  IUpdateProductInput,
+  IUpdateProductOutput,
+} from '../../domain/interfaces';
+import { ProductRepository } from '../../domain/repositories';
+import { BaseUseCase } from '../base.use-case';
 
 const PRODUCTS_LIST_CACHE_PREFIX = 'products:list:';
 
-export class UpdateProductUseCase extends BaseUseCase<IUpdateProductInput, IUpdateProductOutput> {
+export class UpdateProductUseCase extends BaseUseCase<
+  IUpdateProductInput,
+  IUpdateProductOutput
+> {
   constructor(
     private readonly productRepository: ProductRepository,
     private readonly cacheAdapter: CacheAdapter,

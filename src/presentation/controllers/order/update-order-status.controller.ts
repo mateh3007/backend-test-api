@@ -6,7 +6,9 @@ import { IUpdateOrderStatusOutput } from '../../../domain/interfaces';
 
 @Controller('orders')
 export class UpdateOrderStatusController extends BaseController {
-  constructor(private readonly updateOrderStatusUseCase: UpdateOrderStatusUseCase) {
+  constructor(
+    private readonly updateOrderStatusUseCase: UpdateOrderStatusUseCase,
+  ) {
     super();
   }
 
@@ -19,4 +21,3 @@ export class UpdateOrderStatusController extends BaseController {
     return this.success(result);
   }
 }
-

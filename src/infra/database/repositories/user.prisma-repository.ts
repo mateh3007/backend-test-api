@@ -2,13 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { User as PrismaUser, Prisma } from '@prisma/client';
 import { UserEntity } from '../../../domain/entities';
 import { RoleEnum, StepOnboardingEnum } from '../../../domain/enum';
-import { IUserRepositoryFilter, UserRepository } from '../../../domain/repositories';
+import {
+  IUserRepositoryFilter,
+  UserRepository,
+} from '../../../domain/repositories';
 import { PrismaService } from '../prisma/prisma.service';
 import { BasePrismaRepository } from './base.prisma-repository';
 
 @Injectable()
 export class UserPrismaRepository
-  extends BasePrismaRepository<UserEntity, PrismaUser, Prisma.UserDelegate>
+  extends BasePrismaRepository<UserEntity, PrismaUser>
   implements UserRepository
 {
   constructor(prisma: PrismaService) {
@@ -30,7 +33,7 @@ export class UserPrismaRepository
     return user;
   }
 
-  protected toPrisma(entity: UserEntity): Prisma.UserCreateInput & { id?: string } {
+  protected toPrisma(entity: UserEntity): Record<string, unknown> {
     return {
       id: entity._id,
       name: entity.name,
@@ -39,7 +42,9 @@ export class UserPrismaRepository
       phone: entity.phone,
       stepOnboarding: entity.stepOnboarding,
       role: entity.role,
-      company: entity.companyId ? { connect: { id: entity.companyId } } : undefined,
+      company: entity.companyId
+        ? { connect: { id: entity.companyId } }
+        : undefined,
     };
   }
 
@@ -64,4 +69,3 @@ export class UserPrismaRepository
     return result ? this.toDomain(result) : null;
   }
 }
-

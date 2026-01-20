@@ -1,7 +1,11 @@
 import { CreateAddressUseCase } from './create-address.use-case';
 import { AddressRepository, UserRepository } from '../../domain/repositories';
 import { AddressEntity, UserEntity } from '../../domain/entities';
-import { AddressableEnum, RoleEnum, StepOnboardingEnum } from '../../domain/enum';
+import {
+  AddressableEnum,
+  RoleEnum,
+  StepOnboardingEnum,
+} from '../../domain/enum';
 import { ICreateAddressInput } from '../../domain/interfaces';
 
 describe('CreateAddressUseCase', () => {
@@ -80,7 +84,10 @@ describe('CreateAddressUseCase', () => {
 
       const result = await useCase.execute(input);
 
-      expect(addressRepository.findByAddressableIdAndType).toHaveBeenCalledWith('user-123', AddressableEnum.USER);
+      expect(addressRepository.findByAddressableIdAndType).toHaveBeenCalledWith(
+        'user-123',
+        AddressableEnum.USER,
+      );
       expect(addressRepository.create).toHaveBeenCalled();
       expect(result.id).toBe('address-123');
       expect(result.country).toBe(input.country);
@@ -126,9 +133,13 @@ describe('CreateAddressUseCase', () => {
         addressableType: AddressableEnum.USER,
       };
 
-      addressRepository.findByAddressableIdAndType.mockResolvedValue(mockAddressEntity());
+      addressRepository.findByAddressableIdAndType.mockResolvedValue(
+        mockAddressEntity(),
+      );
 
-      await expect(useCase.execute(input)).rejects.toThrow('Address already exists for this entity');
+      await expect(useCase.execute(input)).rejects.toThrow(
+        'Address already exists for this entity',
+      );
       expect(addressRepository.create).not.toHaveBeenCalled();
     });
 
@@ -186,4 +197,3 @@ describe('CreateAddressUseCase', () => {
     });
   });
 });
-

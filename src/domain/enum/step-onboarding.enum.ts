@@ -1,4 +1,4 @@
 export enum StepOnboardingEnum {
-    PROFILE = 'PROFILE',
-    ADDRESS = 'ADDRESS'
+  PROFILE = 'PROFILE',
+  ADDRESS = 'ADDRESS',
 }

@@ -9,14 +9,14 @@ export interface ICreateUserInput {
   companyId?: string;
 }
 
-export interface ICreateUserOutput extends ICreateUserInput{
+export interface ICreateUserOutput extends ICreateUserInput {
   createdAt: Date;
 }
 
-export interface IUpdateUserInput extends Partial<ICreateUserInput>{
+export interface IUpdateUserInput extends Partial<ICreateUserInput> {
   id: string;
 }
 
-export interface IUpdateUserOutput extends IUpdateUserInput{
+export interface IUpdateUserOutput extends IUpdateUserInput {
   updatedAt: Date;
 }

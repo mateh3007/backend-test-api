@@ -1,10 +1,15 @@
-import { OrderStatusEnum } from "../../domain/enum";
-import { IUpdateOrderStatusInput, IUpdateOrderStatusOutput } from "../../domain/interfaces";
-import { OrderRepository, ProductRepository } from "../../domain/repositories";
-import { BaseUseCase } from "../base.use-case";
+import { OrderStatusEnum } from '../../domain/enum';
+import {
+  IUpdateOrderStatusInput,
+  IUpdateOrderStatusOutput,
+} from '../../domain/interfaces';
+import { OrderRepository, ProductRepository } from '../../domain/repositories';
+import { BaseUseCase } from '../base.use-case';
 
-
-export class UpdateOrderStatusUseCase extends BaseUseCase<IUpdateOrderStatusInput, IUpdateOrderStatusOutput> {
+export class UpdateOrderStatusUseCase extends BaseUseCase<
+  IUpdateOrderStatusInput,
+  IUpdateOrderStatusOutput
+> {
   constructor(
     private readonly orderRepository: OrderRepository,
     private readonly productRepository: ProductRepository,
@@ -12,7 +17,9 @@ export class UpdateOrderStatusUseCase extends BaseUseCase<IUpdateOrderStatusInpu
     super();
   }
 
-  async execute(input: IUpdateOrderStatusInput): Promise<IUpdateOrderStatusOutput> {
+  async execute(
+    input: IUpdateOrderStatusInput,
+  ): Promise<IUpdateOrderStatusOutput> {
     const order = await this.orderRepository.findById(input.id);
 
     if (!order) {
@@ -23,12 +30,18 @@ export class UpdateOrderStatusUseCase extends BaseUseCase<IUpdateOrderStatusInpu
       throw new Error('Cannot update a cancelled order');
     }
 
-    if (order.status === OrderStatusEnum.CONFIRMED && input.status === OrderStatusEnum.PENDING) {
+    if (
+      order.status === OrderStatusEnum.CONFIRMED &&
+      input.status === OrderStatusEnum.PENDING
+    ) {
       throw new Error('Cannot revert a confirmed order to pending');
     }
 
     // Update stock when order is confirmed
-    if (input.status === OrderStatusEnum.CONFIRMED && order.status === OrderStatusEnum.PENDING) {
+    if (
+      input.status === OrderStatusEnum.CONFIRMED &&
+      order.status === OrderStatusEnum.PENDING
+    ) {
       const product = await this.productRepository.findById(order.productId);
 
       if (!product) {
@@ -44,7 +57,10 @@ export class UpdateOrderStatusUseCase extends BaseUseCase<IUpdateOrderStatusInpu
     }
 
     // Restore stock when order is cancelled
-    if (input.status === OrderStatusEnum.CANCELLED && order.status === OrderStatusEnum.CONFIRMED) {
+    if (
+      input.status === OrderStatusEnum.CANCELLED &&
+      order.status === OrderStatusEnum.CONFIRMED
+    ) {
       const product = await this.productRepository.findById(order.productId);
 
       if (product) {
@@ -63,4 +79,3 @@ export class UpdateOrderStatusUseCase extends BaseUseCase<IUpdateOrderStatusInpu
     };
   }
 }
-

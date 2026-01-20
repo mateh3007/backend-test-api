@@ -13,9 +13,10 @@ export class RegisterController extends BaseController {
 
   @Public()
   @Post('register')
-  async handle(@Body() dto: RegisterDto): Promise<IApiResponse<IRegisterOutput>> {
+  async handle(
+    @Body() dto: RegisterDto,
+  ): Promise<IApiResponse<IRegisterOutput>> {
     const result = await this.registerUseCase.execute(dto);
     return this.created(result);
   }
 }
-

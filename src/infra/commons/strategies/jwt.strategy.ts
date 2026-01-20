@@ -20,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: IJwtPayload): Promise<ICurrentUser> {
+  validate(payload: IJwtPayload): ICurrentUser {
     if (!payload.sub || !payload.email) {
       throw new UnauthorizedException('Invalid token payload');
     }
@@ -33,4 +33,3 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     };
   }
 }
-

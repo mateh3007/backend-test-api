@@ -19,4 +19,3 @@ export class UpdateProductController extends BaseController {
     return this.success(result);
   }
 }
-

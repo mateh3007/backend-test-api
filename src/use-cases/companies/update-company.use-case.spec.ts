@@ -78,7 +78,9 @@ describe('UpdateCompanyUseCase', () => {
       companyRepository.findById.mockResolvedValue(existingCompany);
       companyRepository.findByFilter.mockResolvedValue([otherCompany]);
 
-      await expect(useCase.execute(input)).rejects.toThrow('CNPJ already in use by another company');
+      await expect(useCase.execute(input)).rejects.toThrow(
+        'CNPJ already in use by another company',
+      );
       expect(companyRepository.update).not.toHaveBeenCalled();
     });
 

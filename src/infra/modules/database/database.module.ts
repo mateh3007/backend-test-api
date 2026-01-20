@@ -7,4 +7,3 @@ import { PrismaService } from '../../database/prisma/prisma.service';
   exports: [PrismaService],
 })
 export class DatabaseModule {}
-

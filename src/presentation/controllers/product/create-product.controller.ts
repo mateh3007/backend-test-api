@@ -27,4 +27,3 @@ export class CreateProductController extends BaseController {
     return this.created(result);
   }
 }
-

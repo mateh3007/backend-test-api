@@ -1,12 +1,18 @@
-import { CacheAdapter } from "../../domain/adapters";
-import { IListProductsInput, IListProductsOutput } from "../../domain/interfaces";
-import { ProductRepository } from "../../domain/repositories";
-import { BaseUseCase } from "../base.use-case";
+import { CacheAdapter } from '../../domain/adapters';
+import {
+  IListProductsInput,
+  IListProductsOutput,
+} from '../../domain/interfaces';
+import { ProductRepository } from '../../domain/repositories';
+import { BaseUseCase } from '../base.use-case';
 
 const PRODUCTS_LIST_CACHE_TTL = 300; // 5 minutes
 const PRODUCTS_LIST_CACHE_PREFIX = 'products:list:';
 
-export class ListProductsUseCase extends BaseUseCase<IListProductsInput, IListProductsOutput> {
+export class ListProductsUseCase extends BaseUseCase<
+  IListProductsInput,
+  IListProductsOutput
+> {
   constructor(
     private readonly productRepository: ProductRepository,
     private readonly cacheAdapter: CacheAdapter,
@@ -31,7 +37,8 @@ export class ListProductsUseCase extends BaseUseCase<IListProductsInput, IListPr
 
   async execute(input: IListProductsInput): Promise<IListProductsOutput> {
     const cacheKey = this.buildCacheKey(input);
-    const cachedResult = await this.cacheAdapter.get<IListProductsOutput>(cacheKey);
+    const cachedResult =
+      await this.cacheAdapter.get<IListProductsOutput>(cacheKey);
 
     if (cachedResult) {
       return cachedResult;
@@ -43,10 +50,13 @@ export class ListProductsUseCase extends BaseUseCase<IListProductsInput, IListPr
       sellerId: input.sellerId,
       sellerType: input.sellerType,
       freeShipping: input.freeShipping,
-      price: input.priceMin || input.priceMax ? {
-        min: input.priceMin,
-        max: input.priceMax,
-      } : undefined,
+      price:
+        input.priceMin || input.priceMax
+          ? {
+              min: input.priceMin,
+              max: input.priceMax,
+            }
+          : undefined,
       limit: input.limit,
       offset: input.offset,
     };
@@ -54,7 +64,7 @@ export class ListProductsUseCase extends BaseUseCase<IListProductsInput, IListPr
     const products = await this.productRepository.findByFilter(filter);
 
     const result: IListProductsOutput = {
-      products: products.map(product => ({
+      products: products.map((product) => ({
         id: product._id,
         name: product.name,
         category: product.category,

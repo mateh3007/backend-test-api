@@ -47,7 +47,9 @@ describe('CreateCompanyUseCase', () => {
 
       const result = await useCase.execute(input);
 
-      expect(companyRepository.findByFilter).toHaveBeenCalledWith({ cnpj: input.cnpj });
+      expect(companyRepository.findByFilter).toHaveBeenCalledWith({
+        cnpj: input.cnpj,
+      });
       expect(companyRepository.create).toHaveBeenCalled();
       expect(result.id).toBe('company-123');
       expect(result.corporateName).toBe(input.corporateName);
@@ -65,7 +67,9 @@ describe('CreateCompanyUseCase', () => {
 
       companyRepository.findByFilter.mockResolvedValue([mockCompanyEntity()]);
 
-      await expect(useCase.execute(input)).rejects.toThrow('Company with this CNPJ already exists');
+      await expect(useCase.execute(input)).rejects.toThrow(
+        'Company with this CNPJ already exists',
+      );
       expect(companyRepository.create).not.toHaveBeenCalled();
     });
   });

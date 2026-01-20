@@ -27,4 +27,3 @@ import { JwtStrategy } from '../../commons/strategies';
   exports: [JwtModule, PassportModule],
 })
 export class AuthModule {}
-

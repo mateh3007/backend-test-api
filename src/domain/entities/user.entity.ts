@@ -1,82 +1,82 @@
-import { StepOnboardingEnum } from "../enum/step-onboarding.enum";
-import { BaseEntity } from "./base.entity";
-import { RoleEnum } from "../enum/role.enum";
+import { StepOnboardingEnum } from '../enum/step-onboarding.enum';
+import { BaseEntity } from './base.entity';
+import { RoleEnum } from '../enum/role.enum';
 
 export class UserEntity extends BaseEntity {
-    private _name: string;
-    private _email: string;
-    private _password: string;
-    private _phone: string;
-    private _stepOnboarding: StepOnboardingEnum;
-    private _role: RoleEnum;
-    private _companyId?: string;
+  private _name: string;
+  private _email: string;
+  private _password: string;
+  private _phone: string;
+  private _stepOnboarding: StepOnboardingEnum;
+  private _role: RoleEnum;
+  private _companyId?: string;
 
-    constructor(user: Partial<UserEntity>) {
-        super(user);
-        Object.assign(this, user);
-    }
+  constructor(user: Partial<UserEntity>) {
+    super(user);
+    Object.assign(this, user);
+  }
 
-    get name(): string {
-        return this._name;
-    }
+  get name(): string {
+    return this._name;
+  }
 
-    get email(): string {
-        return this._email;
-    }
+  get email(): string {
+    return this._email;
+  }
 
-    get password(): string {
-        return this._password;
-    }
+  get password(): string {
+    return this._password;
+  }
 
-    get phone(): string {
-        return this._phone;
-    }
+  get phone(): string {
+    return this._phone;
+  }
 
-    get stepOnboarding(): StepOnboardingEnum {
-        return this._stepOnboarding;
-    }
+  get stepOnboarding(): StepOnboardingEnum {
+    return this._stepOnboarding;
+  }
 
-    get role(): RoleEnum {
-        return this._role;
-    }
+  get role(): RoleEnum {
+    return this._role;
+  }
 
-    get companyId(): string | undefined {
-        return this._companyId;
-    }
+  get companyId(): string | undefined {
+    return this._companyId;
+  }
 
-    belongsToCompany(): boolean {
-        return !!this._companyId;
-      }
-    
-    linkToCompany(companyId: string) {
-        this._companyId = companyId;
-    }
+  belongsToCompany(): boolean {
+    return !!this._companyId;
+  }
 
-    set name(name: string) {
-        this._name = name;
-    }
+  linkToCompany(companyId: string) {
+    this._companyId = companyId;
+  }
 
-    set email(email: string) {
-        this._email = email;
-    }
-    
-    set password(password: string) {
-        this._password = password;
-    }
+  set name(name: string) {
+    this._name = name;
+  }
 
-    set phone(phone: string) {
-        this._phone = phone;
-    }
+  set email(email: string) {
+    this._email = email;
+  }
 
-    set stepOnboarding(stepOnboarding: StepOnboardingEnum) {
-        this._stepOnboarding = stepOnboarding;
-    }
+  set password(password: string) {
+    this._password = password;
+  }
 
-    set role(role: RoleEnum) {
-        this._role = role;
-    }
+  set phone(phone: string) {
+    this._phone = phone;
+  }
 
-    set companyId(companyId: string) {
-        this._companyId = companyId;
-    }
+  set stepOnboarding(stepOnboarding: StepOnboardingEnum) {
+    this._stepOnboarding = stepOnboarding;
+  }
+
+  set role(role: RoleEnum) {
+    this._role = role;
+  }
+
+  set companyId(companyId: string) {
+    this._companyId = companyId;
+  }
 }

@@ -2,13 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { Order as PrismaOrder, Prisma } from '@prisma/client';
 import { OrderEntity } from '../../../domain/entities';
 import { OrderStatusEnum, UserTypeEnum } from '../../../domain/enum';
-import { IOrderRepositoryFilter, OrderRepository } from '../../../domain/repositories';
+import {
+  IOrderRepositoryFilter,
+  OrderRepository,
+} from '../../../domain/repositories';
 import { PrismaService } from '../prisma/prisma.service';
 import { BasePrismaRepository } from './base.prisma-repository';
 
 @Injectable()
 export class OrderPrismaRepository
-  extends BasePrismaRepository<OrderEntity, PrismaOrder, Prisma.OrderDelegate>
+  extends BasePrismaRepository<OrderEntity, PrismaOrder>
   implements OrderRepository
 {
   constructor(prisma: PrismaService) {
@@ -31,7 +34,7 @@ export class OrderPrismaRepository
     return order;
   }
 
-  protected toPrisma(entity: OrderEntity): Prisma.OrderUncheckedCreateInput & { id?: string } {
+  protected toPrisma(entity: OrderEntity): Record<string, unknown> {
     return {
       id: entity._id,
       productId: entity.productId,
@@ -58,4 +61,3 @@ export class OrderPrismaRepository
     return results.map((result) => this.toDomain(result));
   }
 }
-

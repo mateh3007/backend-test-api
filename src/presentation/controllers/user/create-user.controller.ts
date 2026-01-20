@@ -14,9 +14,10 @@ export class CreateUserController extends BaseController {
 
   @Post()
   @Roles(RoleEnum.COMPANY_OWNER)
-  async handle(@Body() dto: CreateUserDto): Promise<IApiResponse<ICreateUserOutput>> {
+  async handle(
+    @Body() dto: CreateUserDto,
+  ): Promise<IApiResponse<ICreateUserOutput>> {
     const result = await this.createUserUseCase.execute(dto);
     return this.created(result);
   }
 }
-

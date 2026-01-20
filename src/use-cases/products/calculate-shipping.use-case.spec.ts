@@ -1,6 +1,9 @@
 import { CalculateShippingUseCase } from './calculate-shipping.use-case';
 import { CacheAdapter, ShippingAdapter } from '../../domain/adapters';
-import { AddressRepository, ProductRepository } from '../../domain/repositories';
+import {
+  AddressRepository,
+  ProductRepository,
+} from '../../domain/repositories';
 import { AddressEntity, ProductEntity } from '../../domain/entities';
 import { AddressableEnum, CategoryEnum, UserTypeEnum } from '../../domain/enum';
 import { ICalculateShippingInput } from '../../domain/interfaces';
@@ -72,7 +75,12 @@ describe('CalculateShippingUseCase', () => {
       deleteByPattern: jest.fn(),
     } as jest.Mocked<CacheAdapter>;
 
-    useCase = new CalculateShippingUseCase(productRepository, addressRepository, shippingAdapter, cacheAdapter);
+    useCase = new CalculateShippingUseCase(
+      productRepository,
+      addressRepository,
+      shippingAdapter,
+      cacheAdapter,
+    );
   });
 
   describe('execute', () => {
@@ -86,28 +94,35 @@ describe('CalculateShippingUseCase', () => {
       const sellerAddress = mockAddressEntity();
 
       productRepository.findById.mockResolvedValue(product);
-      addressRepository.findByAddressableIdAndType.mockResolvedValue(sellerAddress);
+      addressRepository.findByAddressableIdAndType.mockResolvedValue(
+        sellerAddress,
+      );
       cacheAdapter.get.mockResolvedValue(null);
       shippingAdapter.calculate.mockResolvedValue({
-        cost: 25.50,
+        cost: 25.5,
         estimatedDays: 5,
       });
 
       const result = await useCase.execute(input);
 
       expect(productRepository.findById).toHaveBeenCalledWith('product-123');
-      expect(addressRepository.findByAddressableIdAndType).toHaveBeenCalledWith('seller-123', 'COMPANY');
-      expect(cacheAdapter.get).toHaveBeenCalledWith('shipping:01310-100:04567-000');
+      expect(addressRepository.findByAddressableIdAndType).toHaveBeenCalledWith(
+        'seller-123',
+        'COMPANY',
+      );
+      expect(cacheAdapter.get).toHaveBeenCalledWith(
+        'shipping:01310-100:04567-000',
+      );
       expect(shippingAdapter.calculate).toHaveBeenCalledWith({
         originZipCode: '01310-100',
         destinationZipCode: '04567-000',
       });
       expect(cacheAdapter.set).toHaveBeenCalledWith(
         'shipping:01310-100:04567-000',
-        { cost: 25.50, estimatedDays: 5 },
+        { cost: 25.5, estimatedDays: 5 },
         3600,
       );
-      expect(result.shippingCost).toBe(25.50);
+      expect(result.shippingCost).toBe(25.5);
       expect(result.estimatedDays).toBe(5);
       expect(result.originZipCode).toBe('01310-100');
       expect(result.destinationZipCode).toBe('04567-000');
@@ -123,15 +138,19 @@ describe('CalculateShippingUseCase', () => {
       const sellerAddress = mockAddressEntity();
 
       productRepository.findById.mockResolvedValue(product);
-      addressRepository.findByAddressableIdAndType.mockResolvedValue(sellerAddress);
-      cacheAdapter.get.mockResolvedValue({ cost: 25.50, estimatedDays: 5 });
+      addressRepository.findByAddressableIdAndType.mockResolvedValue(
+        sellerAddress,
+      );
+      cacheAdapter.get.mockResolvedValue({ cost: 25.5, estimatedDays: 5 });
 
       const result = await useCase.execute(input);
 
-      expect(cacheAdapter.get).toHaveBeenCalledWith('shipping:01310-100:04567-000');
+      expect(cacheAdapter.get).toHaveBeenCalledWith(
+        'shipping:01310-100:04567-000',
+      );
       expect(shippingAdapter.calculate).not.toHaveBeenCalled();
       expect(cacheAdapter.set).not.toHaveBeenCalled();
-      expect(result.shippingCost).toBe(25.50);
+      expect(result.shippingCost).toBe(25.5);
       expect(result.estimatedDays).toBe(5);
     });
 
@@ -176,7 +195,9 @@ describe('CalculateShippingUseCase', () => {
       productRepository.findById.mockResolvedValue(product);
       addressRepository.findByAddressableIdAndType.mockResolvedValue(null);
 
-      await expect(useCase.execute(input)).rejects.toThrow('Seller address not found');
+      await expect(useCase.execute(input)).rejects.toThrow(
+        'Seller address not found',
+      );
     });
 
     it('should calculate shipping for user seller', async () => {
@@ -194,17 +215,22 @@ describe('CalculateShippingUseCase', () => {
       sellerAddress.addressableType = AddressableEnum.USER;
 
       productRepository.findById.mockResolvedValue(product);
-      addressRepository.findByAddressableIdAndType.mockResolvedValue(sellerAddress);
+      addressRepository.findByAddressableIdAndType.mockResolvedValue(
+        sellerAddress,
+      );
       cacheAdapter.get.mockResolvedValue(null);
       shippingAdapter.calculate.mockResolvedValue({
-        cost: 30.00,
+        cost: 30.0,
         estimatedDays: 7,
       });
 
       const result = await useCase.execute(input);
 
-      expect(addressRepository.findByAddressableIdAndType).toHaveBeenCalledWith('user-456', 'USER');
-      expect(result.shippingCost).toBe(30.00);
+      expect(addressRepository.findByAddressableIdAndType).toHaveBeenCalledWith(
+        'user-456',
+        'USER',
+      );
+      expect(result.shippingCost).toBe(30.0);
     });
   });
 });

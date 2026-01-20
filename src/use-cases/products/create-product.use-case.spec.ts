@@ -65,7 +65,9 @@ describe('CreateProductUseCase', () => {
       const result = await useCase.execute(input);
 
       expect(productRepository.create).toHaveBeenCalled();
-      expect(cacheAdapter.deleteByPattern).toHaveBeenCalledWith('products:list:*');
+      expect(cacheAdapter.deleteByPattern).toHaveBeenCalledWith(
+        'products:list:*',
+      );
       expect(result.id).toBe('product-123');
       expect(result.name).toBe(input.name);
       expect(result.category).toBe(input.category);

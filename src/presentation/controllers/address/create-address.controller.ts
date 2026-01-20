@@ -27,4 +27,3 @@ export class CreateAddressController extends BaseController {
     return this.created(result);
   }
 }
-

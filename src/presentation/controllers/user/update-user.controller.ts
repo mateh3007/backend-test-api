@@ -22,4 +22,3 @@ export class UpdateUserController extends BaseController {
     return this.success(result);
   }
 }
-

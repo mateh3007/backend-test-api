@@ -19,4 +19,3 @@ export class LoginController extends BaseController {
     return this.success(result);
   }
 }
-

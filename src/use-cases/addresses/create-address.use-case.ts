@@ -1,10 +1,16 @@
-import { AddressEntity } from "../../domain/entities";
-import { AddressableEnum, StepOnboardingEnum } from "../../domain/enum";
-import { ICreateAddressInput, ICreateAddressOutput } from "../../domain/interfaces";
-import { AddressRepository, UserRepository } from "../../domain/repositories";
-import { BaseUseCase } from "../base.use-case";
+import { AddressEntity } from '../../domain/entities';
+import { AddressableEnum, StepOnboardingEnum } from '../../domain/enum';
+import {
+  ICreateAddressInput,
+  ICreateAddressOutput,
+} from '../../domain/interfaces';
+import { AddressRepository, UserRepository } from '../../domain/repositories';
+import { BaseUseCase } from '../base.use-case';
 
-export class CreateAddressUseCase extends BaseUseCase<ICreateAddressInput, ICreateAddressOutput> {
+export class CreateAddressUseCase extends BaseUseCase<
+  ICreateAddressInput,
+  ICreateAddressOutput
+> {
   constructor(
     private readonly addressRepository: AddressRepository,
     private readonly userRepository: UserRepository,
@@ -13,10 +19,11 @@ export class CreateAddressUseCase extends BaseUseCase<ICreateAddressInput, ICrea
   }
 
   async execute(input: ICreateAddressInput): Promise<ICreateAddressOutput> {
-    const existingAddress = await this.addressRepository.findByAddressableIdAndType(
-      input.addressableId,
-      input.addressableType,
-    );
+    const existingAddress =
+      await this.addressRepository.findByAddressableIdAndType(
+        input.addressableId,
+        input.addressableType,
+      );
 
     if (existingAddress) {
       throw new Error('Address already exists for this entity');
@@ -61,4 +68,3 @@ export class CreateAddressUseCase extends BaseUseCase<ICreateAddressInput, ICrea
     };
   }
 }
-

@@ -1,4 +1,11 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
 import { RoleEnum } from '../../domain/enum';
 
 export class CreateUserDto {
@@ -54,4 +61,3 @@ export class UpdateUserDto {
   @IsOptional()
   companyId?: string;
 }
-

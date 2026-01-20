@@ -59,8 +59,13 @@ describe('LoginUseCase', () => {
 
       const result = await loginUseCase.execute(input);
 
-      expect(mockUserRepository.findByFilter).toHaveBeenCalledWith({ email: input.email });
-      expect(mockBcryptAdapter.compare).toHaveBeenCalledWith(input.password, user.password);
+      expect(mockUserRepository.findByFilter).toHaveBeenCalledWith({
+        email: input.email,
+      });
+      expect(mockBcryptAdapter.compare).toHaveBeenCalledWith(
+        input.password,
+        user.password,
+      );
       expect(mockJwtAdapter.sign).toHaveBeenCalledWith({
         sub: user._id,
         email: user.email,
@@ -94,11 +99,16 @@ describe('LoginUseCase', () => {
     });
 
     it('should throw error when user not found', async () => {
-      const input = { email: 'nonexistent@example.com', password: 'password123' };
+      const input = {
+        email: 'nonexistent@example.com',
+        password: 'password123',
+      };
 
       mockUserRepository.findByFilter.mockResolvedValue([]);
 
-      await expect(loginUseCase.execute(input)).rejects.toThrow('Invalid credentials');
+      await expect(loginUseCase.execute(input)).rejects.toThrow(
+        'Invalid credentials',
+      );
       expect(mockBcryptAdapter.compare).not.toHaveBeenCalled();
       expect(mockJwtAdapter.sign).not.toHaveBeenCalled();
     });
@@ -110,8 +120,13 @@ describe('LoginUseCase', () => {
       mockUserRepository.findByFilter.mockResolvedValue([user]);
       mockBcryptAdapter.compare.mockResolvedValue(false);
 
-      await expect(loginUseCase.execute(input)).rejects.toThrow('Invalid credentials');
-      expect(mockBcryptAdapter.compare).toHaveBeenCalledWith(input.password, user.password);
+      await expect(loginUseCase.execute(input)).rejects.toThrow(
+        'Invalid credentials',
+      );
+      expect(mockBcryptAdapter.compare).toHaveBeenCalledWith(
+        input.password,
+        user.password,
+      );
       expect(mockJwtAdapter.sign).not.toHaveBeenCalled();
     });
 
@@ -120,14 +135,16 @@ describe('LoginUseCase', () => {
 
       // Test invalid email
       mockUserRepository.findByFilter.mockResolvedValue([]);
-      await expect(loginUseCase.execute({ email: 'invalid@email.com', password: 'pass' }))
-        .rejects.toThrow('Invalid credentials');
+      await expect(
+        loginUseCase.execute({ email: 'invalid@email.com', password: 'pass' }),
+      ).rejects.toThrow('Invalid credentials');
 
       // Test invalid password
       mockUserRepository.findByFilter.mockResolvedValue([user]);
       mockBcryptAdapter.compare.mockResolvedValue(false);
-      await expect(loginUseCase.execute({ email: user.email, password: 'wrong' }))
-        .rejects.toThrow('Invalid credentials');
+      await expect(
+        loginUseCase.execute({ email: user.email, password: 'wrong' }),
+      ).rejects.toThrow('Invalid credentials');
     });
 
     it('should return correct user data in response', async () => {
@@ -147,4 +164,3 @@ describe('LoginUseCase', () => {
     });
   });
 });
-

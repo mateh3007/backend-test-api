@@ -16,4 +16,3 @@ export class JwtIntegration extends JwtAdapter {
     return this.jwtService.verifyAsync(token);
   }
 }
-

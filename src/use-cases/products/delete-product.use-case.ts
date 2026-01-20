@@ -1,11 +1,17 @@
-import { CacheAdapter } from "../../domain/adapters";
-import { IDeleteProductInput, IDeleteProductOutput } from "../../domain/interfaces";
-import { ProductRepository } from "../../domain/repositories";
-import { BaseUseCase } from "../base.use-case";
+import { CacheAdapter } from '../../domain/adapters';
+import {
+  IDeleteProductInput,
+  IDeleteProductOutput,
+} from '../../domain/interfaces';
+import { ProductRepository } from '../../domain/repositories';
+import { BaseUseCase } from '../base.use-case';
 
 const PRODUCTS_LIST_CACHE_PREFIX = 'products:list:';
 
-export class DeleteProductUseCase extends BaseUseCase<IDeleteProductInput, IDeleteProductOutput> {
+export class DeleteProductUseCase extends BaseUseCase<
+  IDeleteProductInput,
+  IDeleteProductOutput
+> {
   constructor(
     private readonly productRepository: ProductRepository,
     private readonly cacheAdapter: CacheAdapter,
@@ -20,7 +26,10 @@ export class DeleteProductUseCase extends BaseUseCase<IDeleteProductInput, IDele
       throw new Error('Product not found');
     }
 
-    if (product.sellerId !== input.sellerId || product.sellerType !== input.sellerType) {
+    if (
+      product.sellerId !== input.sellerId ||
+      product.sellerType !== input.sellerType
+    ) {
       throw new Error('You do not have permission to delete this product');
     }
 

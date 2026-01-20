@@ -25,7 +25,9 @@ describe('UpdateOrderStatusUseCase', () => {
     return product;
   };
 
-  const mockOrderEntity = (status: OrderStatusEnum = OrderStatusEnum.PENDING): OrderEntity => {
+  const mockOrderEntity = (
+    status: OrderStatusEnum = OrderStatusEnum.PENDING,
+  ): OrderEntity => {
     const order = new OrderEntity({});
     order._id = 'order-123';
     order.productId = 'product-123';
@@ -106,7 +108,9 @@ describe('UpdateOrderStatusUseCase', () => {
 
       orderRepository.findById.mockResolvedValue(order);
 
-      await expect(useCase.execute(input)).rejects.toThrow('Cannot update a cancelled order');
+      await expect(useCase.execute(input)).rejects.toThrow(
+        'Cannot update a cancelled order',
+      );
     });
 
     it('should throw error if trying to revert confirmed to pending', async () => {
@@ -119,7 +123,9 @@ describe('UpdateOrderStatusUseCase', () => {
 
       orderRepository.findById.mockResolvedValue(order);
 
-      await expect(useCase.execute(input)).rejects.toThrow('Cannot revert a confirmed order to pending');
+      await expect(useCase.execute(input)).rejects.toThrow(
+        'Cannot revert a confirmed order to pending',
+      );
     });
 
     it('should decrement stock when confirming order', async () => {
@@ -162,7 +168,9 @@ describe('UpdateOrderStatusUseCase', () => {
       orderRepository.findById.mockResolvedValue(order);
       productRepository.findById.mockResolvedValue(product);
 
-      await expect(useCase.execute(input)).rejects.toThrow('Insufficient stock to confirm order');
+      await expect(useCase.execute(input)).rejects.toThrow(
+        'Insufficient stock to confirm order',
+      );
     });
 
     it('should restore stock when cancelling confirmed order', async () => {

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Address as PrismaAddress, Prisma } from '@prisma/client';
+import { Address as PrismaAddress } from '@prisma/client';
 import { AddressEntity } from '../../../domain/entities';
 import { AddressableEnum } from '../../../domain/enum';
 import { AddressRepository } from '../../../domain/repositories';
@@ -8,7 +8,7 @@ import { BasePrismaRepository } from './base.prisma-repository';
 
 @Injectable()
 export class AddressPrismaRepository
-  extends BasePrismaRepository<AddressEntity, PrismaAddress, Prisma.AddressDelegate>
+  extends BasePrismaRepository<AddressEntity, PrismaAddress>
   implements AddressRepository
 {
   constructor(prisma: PrismaService) {
@@ -32,7 +32,7 @@ export class AddressPrismaRepository
     return address;
   }
 
-  protected toPrisma(entity: AddressEntity): Prisma.AddressUncheckedCreateInput & { id?: string } {
+  protected toPrisma(entity: AddressEntity): Record<string, unknown> {
     return {
       id: entity._id,
       country: entity.country,
@@ -61,4 +61,3 @@ export class AddressPrismaRepository
     return result ? this.toDomain(result) : null;
   }
 }
-

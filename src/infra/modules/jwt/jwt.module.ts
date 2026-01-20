@@ -1,14 +1,14 @@
-import { Module } from "@nestjs/common";
-import { JwtAdapter } from "../../../domain/adapters";
-import { JwtIntegration } from "../../integrations";
+import { Module } from '@nestjs/common';
+import { JwtAdapter } from '../../../domain/adapters';
+import { JwtIntegration } from '../../integrations';
 
 @Module({
-   providers: [
+  providers: [
     {
-        provide: JwtAdapter,
-        useClass: JwtIntegration
-    }
-   ],
-   exports: [JwtAdapter]
+      provide: JwtAdapter,
+      useClass: JwtIntegration,
+    },
+  ],
+  exports: [JwtAdapter],
 })
 export class JwtModule {}

@@ -1,4 +1,12 @@
-import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { CategoryEnum, UserTypeEnum } from '../../domain/enum';
 
@@ -106,4 +114,3 @@ export class CalculateShippingDto {
   @IsNotEmpty()
   destinationZipCode: string;
 }
-

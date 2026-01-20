@@ -61,7 +61,9 @@ describe('RegisterUseCase', () => {
 
       const result = await registerUseCase.execute(validInput);
 
-      expect(mockUserRepository.findByFilter).toHaveBeenCalledWith({ email: validInput.email });
+      expect(mockUserRepository.findByFilter).toHaveBeenCalledWith({
+        email: validInput.email,
+      });
       expect(mockBcryptAdapter.hash).toHaveBeenCalledWith(validInput.password);
       expect(mockUserRepository.create).toHaveBeenCalled();
       expect(mockJwtAdapter.sign).toHaveBeenCalledWith({
@@ -109,8 +111,9 @@ describe('RegisterUseCase', () => {
 
       mockUserRepository.findByFilter.mockResolvedValue([existingUser]);
 
-      await expect(registerUseCase.execute(validInput))
-        .rejects.toThrow('User with this email already exists');
+      await expect(registerUseCase.execute(validInput)).rejects.toThrow(
+        'User with this email already exists',
+      );
 
       expect(mockBcryptAdapter.hash).not.toHaveBeenCalled();
       expect(mockUserRepository.create).not.toHaveBeenCalled();
@@ -197,9 +200,8 @@ describe('RegisterUseCase', () => {
       await registerUseCase.execute(validInput);
 
       expect(mockJwtAdapter.sign).toHaveBeenCalledWith(
-        expect.objectContaining({ sub: 'user-123' })
+        expect.objectContaining({ sub: 'user-123' }),
       );
     });
   });
 });
-

@@ -1,8 +1,14 @@
-import { IUpdateAddressInput, IUpdateAddressOutput } from "../../domain/interfaces";
-import { AddressRepository } from "../../domain/repositories";
-import { BaseUseCase } from "../base.use-case";
+import {
+  IUpdateAddressInput,
+  IUpdateAddressOutput,
+} from '../../domain/interfaces';
+import { AddressRepository } from '../../domain/repositories';
+import { BaseUseCase } from '../base.use-case';
 
-export class UpdateAddressUseCase extends BaseUseCase<IUpdateAddressInput, IUpdateAddressOutput> {
+export class UpdateAddressUseCase extends BaseUseCase<
+  IUpdateAddressInput,
+  IUpdateAddressOutput
+> {
   constructor(private readonly addressRepository: AddressRepository) {
     super();
   }
@@ -59,4 +65,3 @@ export class UpdateAddressUseCase extends BaseUseCase<IUpdateAddressInput, IUpda
     };
   }
 }
-

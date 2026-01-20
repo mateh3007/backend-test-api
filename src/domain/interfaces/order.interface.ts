@@ -10,7 +10,7 @@ export interface ICreateOrderInput {
   buyerId: string;
 }
 
-export interface ICreateOrderOutput extends ICreateOrderInput{
+export interface ICreateOrderOutput extends ICreateOrderInput {
   id: string;
   createdAt: Date;
 }
@@ -20,6 +20,6 @@ export interface IUpdateOrderStatusInput {
   status: OrderStatusEnum;
 }
 
-export interface IUpdateOrderStatusOutput extends IUpdateOrderStatusInput{
+export interface IUpdateOrderStatusOutput extends IUpdateOrderStatusInput {
   updatedAt: Date;
 }

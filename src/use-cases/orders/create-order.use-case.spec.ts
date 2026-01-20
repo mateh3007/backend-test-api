@@ -121,7 +121,9 @@ describe('CreateOrderUseCase', () => {
 
       productRepository.findById.mockResolvedValue(product);
 
-      await expect(useCase.execute(input)).rejects.toThrow('Insufficient stock');
+      await expect(useCase.execute(input)).rejects.toThrow(
+        'Insufficient stock',
+      );
       expect(orderRepository.create).not.toHaveBeenCalled();
     });
 
@@ -138,7 +140,7 @@ describe('CreateOrderUseCase', () => {
       const product = mockProductEntity();
       product.price = 100;
 
-      const expectedTotalPrice = (100 * 3) + 15; // 315
+      const expectedTotalPrice = 100 * 3 + 15; // 315
 
       productRepository.findById.mockResolvedValue(product);
       orderRepository.create.mockImplementation(async (order) => {
