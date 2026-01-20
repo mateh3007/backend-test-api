@@ -3,10 +3,14 @@ import { UserEntity } from "../entities";
 import { RoleEnum } from "../enum";
 import { StepOnboardingEnum } from "../enum";
 
+export interface IUserRepositoryFilter {
+    email?: string;
+    phone?: string;
+    companyId?: string;
+    role?: RoleEnum;
+    stepOnboarding?: StepOnboardingEnum;
+}
+
 export abstract class UserRepository extends BaseRepository<UserEntity> {
-    abstract findByEmail(email: string): Promise<UserEntity | null>;
-    abstract findByPhone(phone: string): Promise<UserEntity | null>;
-    abstract findByCompanyId(companyId: string): Promise<UserEntity[]>;
-    abstract findByRole(role: RoleEnum): Promise<UserEntity[]>;
-    abstract findByStepOnboarding(stepOnboarding: StepOnboardingEnum): Promise<UserEntity[]>;
+    abstract findByFilter(filter: IUserRepositoryFilter): Promise<UserEntity[]>;
 }
