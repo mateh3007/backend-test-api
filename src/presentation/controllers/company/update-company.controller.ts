@@ -6,7 +6,7 @@ import {
   Patch,
 } from '@nestjs/common';
 import { CurrentUser, Roles } from '../../../infra/commons/decorators';
-import { ICurrentUser } from '../../../infra/commons/decorators/current-user.decorator';
+import type { ICurrentUser } from '../../../infra/commons/decorators/current-user.decorator';
 import { RoleEnum } from '../../../domain/enum';
 import { UpdateCompanyUseCase } from '../../../use-cases/companies';
 import { UpdateCompanyDto } from '../../dtos';

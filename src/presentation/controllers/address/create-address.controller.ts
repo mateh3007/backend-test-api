@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { CurrentUser } from '../../../infra/commons/decorators';
-import { ICurrentUser } from '../../../infra/commons/decorators/current-user.decorator';
+import type { ICurrentUser } from '../../../infra/commons/decorators/current-user.decorator';
 import { AddressableEnum } from '../../../domain/enum';
 import { CreateAddressUseCase } from '../../../use-cases/addresses';
 import { CreateAddressDto } from '../../dtos';

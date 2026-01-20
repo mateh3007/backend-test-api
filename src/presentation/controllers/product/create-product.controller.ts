@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { CurrentUser } from '../../../infra/commons/decorators';
-import { ICurrentUser } from '../../../infra/commons/decorators/current-user.decorator';
+import type { ICurrentUser } from '../../../infra/commons/decorators/current-user.decorator';
 import { UserTypeEnum } from '../../../domain/enum';
 import { CreateProductUseCase } from '../../../use-cases/products';
 import { CreateProductDto } from '../../dtos';

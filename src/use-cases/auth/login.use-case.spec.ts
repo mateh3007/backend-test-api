@@ -149,7 +149,7 @@ describe('LoginUseCase', () => {
 
     it('should return correct user data in response', async () => {
       const user = mockUser();
-      user.role = RoleEnum.ADMIN;
+      user.role = RoleEnum.COMPANY_OWNER;
       user.stepOnboarding = StepOnboardingEnum.ADDRESS;
       const input = { email: 'john@example.com', password: 'password123' };
 
@@ -159,7 +159,7 @@ describe('LoginUseCase', () => {
 
       const result = await loginUseCase.execute(input);
 
-      expect(result.user.role).toBe(RoleEnum.ADMIN);
+      expect(result.user.role).toBe(RoleEnum.COMPANY_OWNER);
       expect(result.user.stepOnboarding).toBe(StepOnboardingEnum.ADDRESS);
     });
   });
