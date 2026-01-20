@@ -1,18 +1,19 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
-import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtAuthGuard, RolesGuard } from '../../commons/guards';
 import { JwtStrategy } from '../../commons/strategies';
+import { UserRepository } from '../../../domain/repositories';
+import { UserPrismaRepository } from '../../database/repositories';
+import {
+  LoginController,
+  RegisterController,
+} from '../../../presentation/controllers/auth';
+import { LoginUseCase, RegisterUseCase } from '../../../use-cases/auth';
 
 @Module({
-  imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'your-super-secret-jwt-key',
-      signOptions: { expiresIn: Number(process.env.JWT_EXPIRES_IN) || 1 },
-    }),
-  ],
+  imports: [PassportModule.register({ defaultStrategy: 'jwt' })],
+  controllers: [LoginController, RegisterController],
   providers: [
     JwtStrategy,
     {
@@ -23,7 +24,13 @@ import { JwtStrategy } from '../../commons/strategies';
       provide: APP_GUARD,
       useClass: RolesGuard,
     },
+    {
+      provide: UserRepository,
+      useClass: UserPrismaRepository,
+    },
+    LoginUseCase,
+    RegisterUseCase,
   ],
-  exports: [JwtModule, PassportModule],
+  exports: [PassportModule],
 })
 export class AuthModule {}

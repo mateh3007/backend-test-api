@@ -1,7 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ShippingAdapter } from '../../../domain/adapters';
 import { ShippingIntegration } from '../../integrations';
 
+@Global()
 @Module({
   providers: [
     {

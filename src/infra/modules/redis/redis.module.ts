@@ -1,7 +1,8 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { CacheAdapter } from '../../../domain/adapters';
-import { RedisIntegration } from 'src/infra/integrations';
+import { RedisIntegration } from '../../integrations';
 
+@Global()
 @Module({
   providers: [
     {
