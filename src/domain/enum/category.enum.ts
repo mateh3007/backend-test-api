@@ -1,0 +1,9 @@
+export enum CategoryEnum {
+    ELECTRONICS = 'ELECTRONICS',
+    CLOTHING = 'CLOTHING',
+    HOME = 'HOME',
+    BEAUTY = 'BEAUTY',
+    SPORTS = 'SPORTS',
+    TOOLS = 'TOOLS',
+    OTHER = 'OTHER'
+}
