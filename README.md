@@ -892,8 +892,3 @@ docker-compose down -v
 
 - GitHub: [@mateh3007](https://github.com/mateh3007)
 
----
-
-<p align="center">
-  Desenvolvido com ❤️ usando NestJS
-</p>
