@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   ShippingAdapter,
   IShippingCalculateInput,
@@ -6,50 +6,66 @@ import {
 } from '../../../domain/adapters';
 
 interface ShippingApiResponse {
-  price?: number;
-  delivery_time?: number;
-  company?: {
-    name?: string;
-  };
+  valor: string | null;
+  prazo: string | null;
+  servico: string;
+  origem: string;
+  destino: string;
 }
 
 @Injectable()
 export class ShippingIntegration extends ShippingAdapter {
+  private readonly logger = new Logger(ShippingIntegration.name);
   private readonly baseUrl =
-    process.env.SHIPPING_API_URL || 'https://api.melhorenvio.com.br';
-  private readonly apiKey = process.env.SHIPPING_API_KEY;
+    process.env.SHIPPING_API_URL ||
+    'https://showcommerce.com.br/api/calculadora-frete';
+
+  private readonly defaultWeight = '1';
+  private readonly defaultService = 'sedex';
 
   async calculate(
     input: IShippingCalculateInput,
   ): Promise<IShippingCalculateOutput> {
-    const response = await fetch(`${this.baseUrl}/v2/me/shipment/calculate`, {
-      method: 'POST',
+    const originZipCode = input.originZipCode.replace(/\D/g, '');
+    const destinationZipCode = input.destinationZipCode.replace(/\D/g, '');
+
+    const url = `${this.baseUrl}/?cep_origem=${originZipCode}&cep_destino=${destinationZipCode}&servico=${this.defaultService}&peso=${this.defaultWeight}`;
+
+    this.logger.log(
+      `📦 Calculating shipping: ${originZipCode} → ${destinationZipCode}`,
+    );
+
+    const response = await fetch(url, {
+      method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.apiKey}`,
+        'User-Agent':
+          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       },
-      body: JSON.stringify({
-        from: { postal_code: input.originZipCode.replace('-', '') },
-        to: { postal_code: input.destinationZipCode.replace('-', '') },
-      }),
     });
 
     if (!response.ok) {
+      this.logger.error(`❌ Shipping API error: ${response.status}`);
       throw new Error('Failed to calculate shipping');
     }
 
-    const data = (await response.json()) as
-      | ShippingApiResponse
-      | ShippingApiResponse[];
+    const data = (await response.json()) as ShippingApiResponse;
 
-    const cheapestOption: ShippingApiResponse = Array.isArray(data)
-      ? data[0]
-      : data;
+    if (!data.valor || !data.prazo) {
+      this.logger.warn(`⚠️ Shipping not available for this route`);
+      throw new Error('Shipping not available for this route');
+    }
+
+    const cost = parseFloat(data.valor);
+    const estimatedDays = parseInt(data.prazo, 10);
+
+    this.logger.log(
+      `✅ Shipping calculated: R$ ${cost.toFixed(2)} - ${estimatedDays} day(s) - ${data.servico.toUpperCase()}`,
+    );
 
     return {
-      cost: cheapestOption?.price ?? 0,
-      estimatedDays: cheapestOption?.delivery_time ?? 0,
-      carrier: cheapestOption?.company?.name,
+      cost,
+      estimatedDays,
+      carrier: data.servico.toUpperCase(),
     };
   }
 }
