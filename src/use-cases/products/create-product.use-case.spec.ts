@@ -1,4 +1,5 @@
 import { CreateProductUseCase } from './create-product.use-case';
+import { CacheAdapter } from '../../domain/adapters';
 import { ProductRepository } from '../../domain/repositories';
 import { ProductEntity } from '../../domain/entities';
 import { CategoryEnum, UserTypeEnum } from '../../domain/enum';
@@ -7,6 +8,7 @@ import { ICreateProductInput } from '../../domain/interfaces';
 describe('CreateProductUseCase', () => {
   let useCase: CreateProductUseCase;
   let productRepository: jest.Mocked<ProductRepository>;
+  let cacheAdapter: jest.Mocked<CacheAdapter>;
 
   const mockProductEntity = (): ProductEntity => {
     const product = new ProductEntity({});
@@ -34,11 +36,18 @@ describe('CreateProductUseCase', () => {
       findByFilter: jest.fn(),
     } as jest.Mocked<ProductRepository>;
 
-    useCase = new CreateProductUseCase(productRepository);
+    cacheAdapter = {
+      get: jest.fn(),
+      set: jest.fn(),
+      delete: jest.fn(),
+      deleteByPattern: jest.fn(),
+    } as jest.Mocked<CacheAdapter>;
+
+    useCase = new CreateProductUseCase(productRepository, cacheAdapter);
   });
 
   describe('execute', () => {
-    it('should create a product successfully', async () => {
+    it('should create a product successfully and invalidate cache', async () => {
       const input: ICreateProductInput = {
         name: 'iPhone 15',
         category: CategoryEnum.ELECTRONICS,
@@ -56,6 +65,7 @@ describe('CreateProductUseCase', () => {
       const result = await useCase.execute(input);
 
       expect(productRepository.create).toHaveBeenCalled();
+      expect(cacheAdapter.deleteByPattern).toHaveBeenCalledWith('products:list:*');
       expect(result.id).toBe('product-123');
       expect(result.name).toBe(input.name);
       expect(result.category).toBe(input.category);

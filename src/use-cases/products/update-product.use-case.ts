@@ -1,10 +1,15 @@
+import { CacheAdapter } from "../../domain/adapters";
 import { IUpdateProductInput, IUpdateProductOutput } from "../../domain/interfaces";
 import { ProductRepository } from "../../domain/repositories";
 import { BaseUseCase } from "../base.use-case";
 
+const PRODUCTS_LIST_CACHE_PREFIX = 'products:list:';
 
 export class UpdateProductUseCase extends BaseUseCase<IUpdateProductInput, IUpdateProductOutput> {
-  constructor(private readonly productRepository: ProductRepository) {
+  constructor(
+    private readonly productRepository: ProductRepository,
+    private readonly cacheAdapter: CacheAdapter,
+  ) {
     super();
   }
 
@@ -41,6 +46,8 @@ export class UpdateProductUseCase extends BaseUseCase<IUpdateProductInput, IUpda
 
     const updatedProduct = await this.productRepository.update(product);
 
+    await this.cacheAdapter.deleteByPattern(`${PRODUCTS_LIST_CACHE_PREFIX}*`);
+
     return {
       id: updatedProduct._id,
       name: updatedProduct.name,
@@ -55,4 +62,3 @@ export class UpdateProductUseCase extends BaseUseCase<IUpdateProductInput, IUpda
     };
   }
 }
-

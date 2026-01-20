@@ -1,11 +1,16 @@
+import { CacheAdapter } from "../../domain/adapters";
 import { ProductEntity } from "../../domain/entities";
 import { ICreateProductInput, ICreateProductOutput } from "../../domain/interfaces";
 import { ProductRepository } from "../../domain/repositories";
 import { BaseUseCase } from "../base.use-case";
 
+const PRODUCTS_LIST_CACHE_PREFIX = 'products:list:';
 
 export class CreateProductUseCase extends BaseUseCase<ICreateProductInput, ICreateProductOutput> {
-  constructor(private readonly productRepository: ProductRepository) {
+  constructor(
+    private readonly productRepository: ProductRepository,
+    private readonly cacheAdapter: CacheAdapter,
+  ) {
     super();
   }
 
@@ -22,6 +27,8 @@ export class CreateProductUseCase extends BaseUseCase<ICreateProductInput, ICrea
 
     const createdProduct = await this.productRepository.create(product);
 
+    await this.cacheAdapter.deleteByPattern(`${PRODUCTS_LIST_CACHE_PREFIX}*`);
+
     return {
       id: createdProduct._id,
       name: createdProduct.name,
@@ -36,4 +43,3 @@ export class CreateProductUseCase extends BaseUseCase<ICreateProductInput, ICrea
     };
   }
 }
-

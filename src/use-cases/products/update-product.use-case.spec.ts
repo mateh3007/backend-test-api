@@ -1,4 +1,5 @@
 import { UpdateProductUseCase } from './update-product.use-case';
+import { CacheAdapter } from '../../domain/adapters';
 import { ProductRepository } from '../../domain/repositories';
 import { ProductEntity } from '../../domain/entities';
 import { CategoryEnum, UserTypeEnum } from '../../domain/enum';
@@ -7,6 +8,7 @@ import { IUpdateProductInput } from '../../domain/interfaces';
 describe('UpdateProductUseCase', () => {
   let useCase: UpdateProductUseCase;
   let productRepository: jest.Mocked<ProductRepository>;
+  let cacheAdapter: jest.Mocked<CacheAdapter>;
 
   const mockProductEntity = (): ProductEntity => {
     const product = new ProductEntity({});
@@ -34,11 +36,18 @@ describe('UpdateProductUseCase', () => {
       findByFilter: jest.fn(),
     } as jest.Mocked<ProductRepository>;
 
-    useCase = new UpdateProductUseCase(productRepository);
+    cacheAdapter = {
+      get: jest.fn(),
+      set: jest.fn(),
+      delete: jest.fn(),
+      deleteByPattern: jest.fn(),
+    } as jest.Mocked<CacheAdapter>;
+
+    useCase = new UpdateProductUseCase(productRepository, cacheAdapter);
   });
 
   describe('execute', () => {
-    it('should update product name successfully', async () => {
+    it('should update product name successfully and invalidate cache', async () => {
       const input: IUpdateProductInput = {
         id: 'product-123',
         name: 'iPhone 16',
@@ -54,6 +63,7 @@ describe('UpdateProductUseCase', () => {
       const result = await useCase.execute(input);
 
       expect(productRepository.findById).toHaveBeenCalledWith('product-123');
+      expect(cacheAdapter.deleteByPattern).toHaveBeenCalledWith('products:list:*');
       expect(result.name).toBe('iPhone 16');
     });
 
@@ -67,6 +77,7 @@ describe('UpdateProductUseCase', () => {
 
       await expect(useCase.execute(input)).rejects.toThrow('Product not found');
       expect(productRepository.update).not.toHaveBeenCalled();
+      expect(cacheAdapter.deleteByPattern).not.toHaveBeenCalled();
     });
 
     it('should update product price successfully', async () => {

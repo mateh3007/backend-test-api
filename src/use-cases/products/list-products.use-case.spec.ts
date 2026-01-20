@@ -1,12 +1,14 @@
 import { ListProductsUseCase } from './list-products.use-case';
+import { CacheAdapter } from '../../domain/adapters';
 import { ProductRepository } from '../../domain/repositories';
 import { ProductEntity } from '../../domain/entities';
 import { CategoryEnum, UserTypeEnum } from '../../domain/enum';
-import { IListProductsInput } from '../../domain/interfaces';
+import { IListProductsInput, IListProductsOutput } from '../../domain/interfaces';
 
 describe('ListProductsUseCase', () => {
   let useCase: ListProductsUseCase;
   let productRepository: jest.Mocked<ProductRepository>;
+  let cacheAdapter: jest.Mocked<CacheAdapter>;
 
   const mockProductEntity = (overrides?: Partial<ProductEntity>): ProductEntity => {
     const product = new ProductEntity({});
@@ -35,11 +37,18 @@ describe('ListProductsUseCase', () => {
       findByFilter: jest.fn(),
     } as jest.Mocked<ProductRepository>;
 
-    useCase = new ListProductsUseCase(productRepository);
+    cacheAdapter = {
+      get: jest.fn(),
+      set: jest.fn(),
+      delete: jest.fn(),
+      deleteByPattern: jest.fn(),
+    } as jest.Mocked<CacheAdapter>;
+
+    useCase = new ListProductsUseCase(productRepository, cacheAdapter);
   });
 
   describe('execute', () => {
-    it('should list all products', async () => {
+    it('should list all products and cache result', async () => {
       const input: IListProductsInput = {};
 
       const products = [
@@ -47,13 +56,49 @@ describe('ListProductsUseCase', () => {
         mockProductEntity({ _id: 'product-456', name: 'Samsung Galaxy' }),
       ];
 
+      cacheAdapter.get.mockResolvedValue(null);
       productRepository.findByFilter.mockResolvedValue(products);
 
       const result = await useCase.execute(input);
 
+      expect(cacheAdapter.get).toHaveBeenCalled();
       expect(productRepository.findByFilter).toHaveBeenCalled();
+      expect(cacheAdapter.set).toHaveBeenCalled();
       expect(result.products).toHaveLength(2);
       expect(result.total).toBe(2);
+    });
+
+    it('should return cached result when available', async () => {
+      const input: IListProductsInput = {};
+
+      const cachedResult: IListProductsOutput = {
+        products: [
+          {
+            id: 'product-123',
+            name: 'iPhone 15',
+            category: CategoryEnum.ELECTRONICS,
+            description: 'Latest Apple smartphone',
+            price: 999.99,
+            stock: 100,
+            freeShipping: true,
+            sellerId: 'seller-123',
+            sellerType: UserTypeEnum.COMPANY,
+            createdAt: new Date('2026-01-01'),
+            updatedAt: new Date('2026-01-01'),
+          },
+        ],
+        total: 1,
+      };
+
+      cacheAdapter.get.mockResolvedValue(cachedResult);
+
+      const result = await useCase.execute(input);
+
+      expect(cacheAdapter.get).toHaveBeenCalled();
+      expect(productRepository.findByFilter).not.toHaveBeenCalled();
+      expect(cacheAdapter.set).not.toHaveBeenCalled();
+      expect(result.products).toHaveLength(1);
+      expect(result.total).toBe(1);
     });
 
     it('should filter products by category', async () => {
@@ -63,6 +108,7 @@ describe('ListProductsUseCase', () => {
 
       const products = [mockProductEntity()];
 
+      cacheAdapter.get.mockResolvedValue(null);
       productRepository.findByFilter.mockResolvedValue(products);
 
       const result = await useCase.execute(input);
@@ -81,6 +127,7 @@ describe('ListProductsUseCase', () => {
 
       const products = [mockProductEntity()];
 
+      cacheAdapter.get.mockResolvedValue(null);
       productRepository.findByFilter.mockResolvedValue(products);
 
       const result = await useCase.execute(input);
@@ -102,6 +149,7 @@ describe('ListProductsUseCase', () => {
 
       const products = [mockProductEntity()];
 
+      cacheAdapter.get.mockResolvedValue(null);
       productRepository.findByFilter.mockResolvedValue(products);
 
       const result = await useCase.execute(input);
@@ -121,6 +169,7 @@ describe('ListProductsUseCase', () => {
 
       const products = [mockProductEntity()];
 
+      cacheAdapter.get.mockResolvedValue(null);
       productRepository.findByFilter.mockResolvedValue(products);
 
       const result = await useCase.execute(input);
@@ -136,6 +185,7 @@ describe('ListProductsUseCase', () => {
         category: CategoryEnum.SPORTS,
       };
 
+      cacheAdapter.get.mockResolvedValue(null);
       productRepository.findByFilter.mockResolvedValue([]);
 
       const result = await useCase.execute(input);
@@ -152,6 +202,7 @@ describe('ListProductsUseCase', () => {
 
       const products = [mockProductEntity()];
 
+      cacheAdapter.get.mockResolvedValue(null);
       productRepository.findByFilter.mockResolvedValue(products);
 
       await useCase.execute(input);
@@ -160,6 +211,21 @@ describe('ListProductsUseCase', () => {
         expect.objectContaining({ limit: 10, offset: 20 }),
       );
     });
+
+    it('should generate different cache keys for different filters', async () => {
+      const input1: IListProductsInput = { category: CategoryEnum.ELECTRONICS };
+      const input2: IListProductsInput = { category: CategoryEnum.CLOTHING };
+
+      cacheAdapter.get.mockResolvedValue(null);
+      productRepository.findByFilter.mockResolvedValue([]);
+
+      await useCase.execute(input1);
+      const cacheKey1 = cacheAdapter.get.mock.calls[0][0];
+
+      await useCase.execute(input2);
+      const cacheKey2 = cacheAdapter.get.mock.calls[1][0];
+
+      expect(cacheKey1).not.toBe(cacheKey2);
+    });
   });
 });
-

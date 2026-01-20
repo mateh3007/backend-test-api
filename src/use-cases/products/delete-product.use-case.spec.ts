@@ -1,4 +1,5 @@
 import { DeleteProductUseCase } from './delete-product.use-case';
+import { CacheAdapter } from '../../domain/adapters';
 import { ProductRepository } from '../../domain/repositories';
 import { ProductEntity } from '../../domain/entities';
 import { CategoryEnum, UserTypeEnum } from '../../domain/enum';
@@ -7,6 +8,7 @@ import { IDeleteProductInput } from '../../domain/interfaces';
 describe('DeleteProductUseCase', () => {
   let useCase: DeleteProductUseCase;
   let productRepository: jest.Mocked<ProductRepository>;
+  let cacheAdapter: jest.Mocked<CacheAdapter>;
 
   const mockProductEntity = (): ProductEntity => {
     const product = new ProductEntity({});
@@ -34,11 +36,18 @@ describe('DeleteProductUseCase', () => {
       findByFilter: jest.fn(),
     } as jest.Mocked<ProductRepository>;
 
-    useCase = new DeleteProductUseCase(productRepository);
+    cacheAdapter = {
+      get: jest.fn(),
+      set: jest.fn(),
+      delete: jest.fn(),
+      deleteByPattern: jest.fn(),
+    } as jest.Mocked<CacheAdapter>;
+
+    useCase = new DeleteProductUseCase(productRepository, cacheAdapter);
   });
 
   describe('execute', () => {
-    it('should delete product successfully', async () => {
+    it('should delete product successfully and invalidate cache', async () => {
       const input: IDeleteProductInput = {
         id: 'product-123',
         sellerId: 'seller-123',
@@ -54,6 +63,7 @@ describe('DeleteProductUseCase', () => {
 
       expect(productRepository.findById).toHaveBeenCalledWith('product-123');
       expect(productRepository.delete).toHaveBeenCalledWith('product-123');
+      expect(cacheAdapter.deleteByPattern).toHaveBeenCalledWith('products:list:*');
       expect(result.success).toBe(true);
     });
 
@@ -68,6 +78,7 @@ describe('DeleteProductUseCase', () => {
 
       await expect(useCase.execute(input)).rejects.toThrow('Product not found');
       expect(productRepository.delete).not.toHaveBeenCalled();
+      expect(cacheAdapter.deleteByPattern).not.toHaveBeenCalled();
     });
 
     it('should throw error if seller does not own the product', async () => {
@@ -83,6 +94,7 @@ describe('DeleteProductUseCase', () => {
 
       await expect(useCase.execute(input)).rejects.toThrow('You do not have permission to delete this product');
       expect(productRepository.delete).not.toHaveBeenCalled();
+      expect(cacheAdapter.deleteByPattern).not.toHaveBeenCalled();
     });
 
     it('should throw error if sellerType does not match', async () => {
@@ -98,6 +110,7 @@ describe('DeleteProductUseCase', () => {
 
       await expect(useCase.execute(input)).rejects.toThrow('You do not have permission to delete this product');
       expect(productRepository.delete).not.toHaveBeenCalled();
+      expect(cacheAdapter.deleteByPattern).not.toHaveBeenCalled();
     });
 
     it('should allow user to delete their own product', async () => {
@@ -117,7 +130,7 @@ describe('DeleteProductUseCase', () => {
       const result = await useCase.execute(input);
 
       expect(result.success).toBe(true);
+      expect(cacheAdapter.deleteByPattern).toHaveBeenCalledWith('products:list:*');
     });
   });
 });
-

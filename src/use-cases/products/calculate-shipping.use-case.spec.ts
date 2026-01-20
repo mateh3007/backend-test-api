@@ -1,5 +1,5 @@
 import { CalculateShippingUseCase } from './calculate-shipping.use-case';
-import { ShippingAdapter } from '../../domain/adapters';
+import { CacheAdapter, ShippingAdapter } from '../../domain/adapters';
 import { AddressRepository, ProductRepository } from '../../domain/repositories';
 import { AddressEntity, ProductEntity } from '../../domain/entities';
 import { AddressableEnum, CategoryEnum, UserTypeEnum } from '../../domain/enum';
@@ -10,6 +10,7 @@ describe('CalculateShippingUseCase', () => {
   let productRepository: jest.Mocked<ProductRepository>;
   let addressRepository: jest.Mocked<AddressRepository>;
   let shippingAdapter: jest.Mocked<ShippingAdapter>;
+  let cacheAdapter: jest.Mocked<CacheAdapter>;
 
   const mockProductEntity = (): ProductEntity => {
     const product = new ProductEntity({});
@@ -64,11 +65,18 @@ describe('CalculateShippingUseCase', () => {
       calculate: jest.fn(),
     } as jest.Mocked<ShippingAdapter>;
 
-    useCase = new CalculateShippingUseCase(productRepository, addressRepository, shippingAdapter);
+    cacheAdapter = {
+      get: jest.fn(),
+      set: jest.fn(),
+      delete: jest.fn(),
+      deleteByPattern: jest.fn(),
+    } as jest.Mocked<CacheAdapter>;
+
+    useCase = new CalculateShippingUseCase(productRepository, addressRepository, shippingAdapter, cacheAdapter);
   });
 
   describe('execute', () => {
-    it('should calculate shipping successfully', async () => {
+    it('should calculate shipping successfully and cache result', async () => {
       const input: ICalculateShippingInput = {
         productId: 'product-123',
         destinationZipCode: '04567-000',
@@ -79,6 +87,7 @@ describe('CalculateShippingUseCase', () => {
 
       productRepository.findById.mockResolvedValue(product);
       addressRepository.findByAddressableIdAndType.mockResolvedValue(sellerAddress);
+      cacheAdapter.get.mockResolvedValue(null);
       shippingAdapter.calculate.mockResolvedValue({
         cost: 25.50,
         estimatedDays: 5,
@@ -88,14 +97,42 @@ describe('CalculateShippingUseCase', () => {
 
       expect(productRepository.findById).toHaveBeenCalledWith('product-123');
       expect(addressRepository.findByAddressableIdAndType).toHaveBeenCalledWith('seller-123', 'COMPANY');
+      expect(cacheAdapter.get).toHaveBeenCalledWith('shipping:01310-100:04567-000');
       expect(shippingAdapter.calculate).toHaveBeenCalledWith({
         originZipCode: '01310-100',
         destinationZipCode: '04567-000',
       });
+      expect(cacheAdapter.set).toHaveBeenCalledWith(
+        'shipping:01310-100:04567-000',
+        { cost: 25.50, estimatedDays: 5 },
+        3600,
+      );
       expect(result.shippingCost).toBe(25.50);
       expect(result.estimatedDays).toBe(5);
       expect(result.originZipCode).toBe('01310-100');
       expect(result.destinationZipCode).toBe('04567-000');
+    });
+
+    it('should return cached result when available', async () => {
+      const input: ICalculateShippingInput = {
+        productId: 'product-123',
+        destinationZipCode: '04567-000',
+      };
+
+      const product = mockProductEntity();
+      const sellerAddress = mockAddressEntity();
+
+      productRepository.findById.mockResolvedValue(product);
+      addressRepository.findByAddressableIdAndType.mockResolvedValue(sellerAddress);
+      cacheAdapter.get.mockResolvedValue({ cost: 25.50, estimatedDays: 5 });
+
+      const result = await useCase.execute(input);
+
+      expect(cacheAdapter.get).toHaveBeenCalledWith('shipping:01310-100:04567-000');
+      expect(shippingAdapter.calculate).not.toHaveBeenCalled();
+      expect(cacheAdapter.set).not.toHaveBeenCalled();
+      expect(result.shippingCost).toBe(25.50);
+      expect(result.estimatedDays).toBe(5);
     });
 
     it('should return free shipping when product has freeShipping', async () => {
@@ -114,6 +151,7 @@ describe('CalculateShippingUseCase', () => {
       expect(result.shippingCost).toBe(0);
       expect(result.estimatedDays).toBe(0);
       expect(shippingAdapter.calculate).not.toHaveBeenCalled();
+      expect(cacheAdapter.get).not.toHaveBeenCalled();
     });
 
     it('should throw error if product not found', async () => {
@@ -157,6 +195,7 @@ describe('CalculateShippingUseCase', () => {
 
       productRepository.findById.mockResolvedValue(product);
       addressRepository.findByAddressableIdAndType.mockResolvedValue(sellerAddress);
+      cacheAdapter.get.mockResolvedValue(null);
       shippingAdapter.calculate.mockResolvedValue({
         cost: 30.00,
         estimatedDays: 7,
