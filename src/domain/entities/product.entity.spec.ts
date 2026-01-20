@@ -1,6 +1,7 @@
 import { ProductEntity } from './product.entity';
 import { BaseEntity } from './base.entity';
 import { CategoryEnum } from '../enum/category.enum';
+import { UserTypeEnum } from '../enum/user.enum';
 
 describe('ProductEntity', () => {
   describe('constructor', () => {
@@ -19,6 +20,8 @@ describe('ProductEntity', () => {
       expect(product.price).toBeUndefined();
       expect(product.stock).toBeUndefined();
       expect(product.freeShipping).toBeUndefined();
+      expect(product.sellerId).toBeUndefined();
+      expect(product.sellerType).toBeUndefined();
     });
   });
 
@@ -93,9 +96,25 @@ describe('ProductEntity', () => {
 
       expect(product.freeShipping).toBe(true);
     });
+
+    it('should set and get sellerId correctly', () => {
+      const product = new ProductEntity({});
+
+      product.sellerId = 'seller-123';
+
+      expect(product.sellerId).toBe('seller-123');
+    });
+
+    it('should set and get sellerType correctly', () => {
+      const product = new ProductEntity({});
+
+      product.sellerType = UserTypeEnum.COMPANY;
+
+      expect(product.sellerType).toBe(UserTypeEnum.COMPANY);
+    });
   });
 
-  describe('enums', () => {
+  describe('category enums', () => {
     it('should accept CategoryEnum.ELECTRONICS', () => {
       const product = new ProductEntity({});
       product.category = CategoryEnum.ELECTRONICS;
@@ -150,6 +169,24 @@ describe('ProductEntity', () => {
 
       expect(product.category).toBe(CategoryEnum.OTHER);
       expect(product.category).toBe('OTHER');
+    });
+  });
+
+  describe('seller type enums', () => {
+    it('should accept UserTypeEnum.COMPANY', () => {
+      const product = new ProductEntity({});
+      product.sellerType = UserTypeEnum.COMPANY;
+
+      expect(product.sellerType).toBe(UserTypeEnum.COMPANY);
+      expect(product.sellerType).toBe('COMPANY');
+    });
+
+    it('should accept UserTypeEnum.USER', () => {
+      const product = new ProductEntity({});
+      product.sellerType = UserTypeEnum.USER;
+
+      expect(product.sellerType).toBe(UserTypeEnum.USER);
+      expect(product.sellerType).toBe('USER');
     });
   });
 
@@ -224,6 +261,17 @@ describe('ProductEntity', () => {
 
       expect(product.category).toBe(CategoryEnum.HOME);
     });
+
+    it('should allow updating seller', () => {
+      const product = new ProductEntity({});
+      product.sellerId = 'seller-old';
+      product.sellerType = UserTypeEnum.USER;
+
+      product.sellerId = 'seller-new';
+      product.sellerType = UserTypeEnum.COMPANY;
+
+      expect(product.sellerId).toBe('seller-new');
+      expect(product.sellerType).toBe(UserTypeEnum.COMPANY);
+    });
   });
 });
-

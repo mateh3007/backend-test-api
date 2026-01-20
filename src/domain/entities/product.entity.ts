@@ -1,5 +1,6 @@
 import { CategoryEnum } from "../enum/category.enum";
 import { BaseEntity } from "./base.entity";
+import { UserTypeEnum } from "../enum/user.enum";
 
 export class ProductEntity extends BaseEntity {
     private _name: string;
@@ -8,9 +9,11 @@ export class ProductEntity extends BaseEntity {
     private _price: number;
     private _stock: number;
     private _freeShipping: boolean;
+    private _sellerId: string;
+    private _sellerType: UserTypeEnum;
     
     constructor(product: Partial<ProductEntity>) {
-        super(product);
+        super(product); 
         Object.assign(this, product);
     }
 
@@ -38,6 +41,14 @@ export class ProductEntity extends BaseEntity {
         return this._freeShipping;
     }
 
+    get sellerId(): string {
+        return this._sellerId;
+    }
+
+    get sellerType(): UserTypeEnum {
+        return this._sellerType;
+    }
+
     set name(name: string) {
         this._name = name;
     }
@@ -60,5 +71,13 @@ export class ProductEntity extends BaseEntity {
 
     set freeShipping(freeShipping: boolean) {
         this._freeShipping = freeShipping;
+    }
+
+    set sellerId(sellerId: string) {
+        this._sellerId = sellerId;
+    }
+
+    set sellerType(sellerType: UserTypeEnum) {
+        this._sellerType = sellerType;
     }
 }
