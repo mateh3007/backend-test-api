@@ -6,8 +6,10 @@ import {
   UpdateUserController,
 } from '../../../presentation/controllers/user';
 import { CreateUserUseCase, UpdateUserUseCase } from '../../../use-cases/users';
+import { DatabaseModule } from '../database';
 
 @Module({
+  imports: [DatabaseModule],
   controllers: [CreateUserController, UpdateUserController],
   providers: [
     {

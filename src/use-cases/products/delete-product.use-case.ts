@@ -1,3 +1,4 @@
+import { Injectable, Logger } from '@nestjs/common';
 import { CacheAdapter } from '../../domain/adapters';
 import {
   IDeleteProductInput,
@@ -8,10 +9,13 @@ import { BaseUseCase } from '../base.use-case';
 
 const PRODUCTS_LIST_CACHE_PREFIX = 'products:list:';
 
+@Injectable()
 export class DeleteProductUseCase extends BaseUseCase<
   IDeleteProductInput,
   IDeleteProductOutput
 > {
+  private readonly logger = new Logger(DeleteProductUseCase.name);
+
   constructor(
     private readonly productRepository: ProductRepository,
     private readonly cacheAdapter: CacheAdapter,
@@ -35,7 +39,12 @@ export class DeleteProductUseCase extends BaseUseCase<
 
     await this.productRepository.delete(input.id);
 
+    this.logger.log(`🗑️ Product deleted: ${input.id}`);
+
     await this.cacheAdapter.deleteByPattern(`${PRODUCTS_LIST_CACHE_PREFIX}*`);
+    this.logger.log(
+      `🗑️ Cache INVALIDATED - Pattern: ${PRODUCTS_LIST_CACHE_PREFIX}*`,
+    );
 
     return {
       success: true,

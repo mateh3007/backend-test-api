@@ -1,9 +1,11 @@
+import { Injectable } from '@nestjs/common';
 import { OrderEntity } from '../../domain/entities';
 import { OrderStatusEnum } from '../../domain/enum';
 import { ICreateOrderInput, ICreateOrderOutput } from '../../domain/interfaces';
 import { OrderRepository, ProductRepository } from '../../domain/repositories';
 import { BaseUseCase } from '../base.use-case';
 
+@Injectable()
 export class CreateOrderUseCase extends BaseUseCase<
   ICreateOrderInput,
   ICreateOrderOutput

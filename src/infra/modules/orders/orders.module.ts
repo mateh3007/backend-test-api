@@ -2,12 +2,10 @@ import { Module } from '@nestjs/common';
 import {
   OrderRepository,
   ProductRepository,
-  AddressRepository,
 } from '../../../domain/repositories';
 import {
   OrderPrismaRepository,
   ProductPrismaRepository,
-  AddressPrismaRepository,
 } from '../../database/repositories';
 import {
   CreateOrderController,
@@ -17,8 +15,10 @@ import {
   CreateOrderUseCase,
   UpdateOrderStatusUseCase,
 } from '../../../use-cases/orders';
+import { DatabaseModule } from '../database';
 
 @Module({
+  imports: [DatabaseModule],
   controllers: [CreateOrderController, UpdateOrderStatusController],
   providers: [
     {
@@ -28,10 +28,6 @@ import {
     {
       provide: ProductRepository,
       useClass: ProductPrismaRepository,
-    },
-    {
-      provide: AddressRepository,
-      useClass: AddressPrismaRepository,
     },
     CreateOrderUseCase,
     UpdateOrderStatusUseCase,

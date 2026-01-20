@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import {
   IUpdateCompanyInput,
   IUpdateCompanyOutput,
@@ -5,6 +6,7 @@ import {
 import { CompanyRepository } from '../../domain/repositories';
 import { BaseUseCase } from '../base.use-case';
 
+@Injectable()
 export class UpdateCompanyUseCase extends BaseUseCase<
   IUpdateCompanyInput,
   IUpdateCompanyOutput

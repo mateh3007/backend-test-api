@@ -21,8 +21,12 @@ import {
   ListProductsUseCase,
   CalculateShippingUseCase,
 } from '../../../use-cases/products';
+import { DatabaseModule } from '../database';
+import { RedisModule } from '../redis';
+import { ShippingModule } from '../shipping';
 
 @Module({
+  imports: [DatabaseModule, RedisModule, ShippingModule],
   controllers: [
     CreateProductController,
     UpdateProductController,

@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { CompanyEntity } from '../../domain/entities';
 import {
   ICreateCompanyInput,
@@ -6,6 +7,7 @@ import {
 import { CompanyRepository } from '../../domain/repositories';
 import { BaseUseCase } from '../base.use-case';
 
+@Injectable()
 export class CreateCompanyUseCase extends BaseUseCase<
   ICreateCompanyInput,
   ICreateCompanyOutput

@@ -1,9 +1,11 @@
+import { Injectable } from '@nestjs/common';
 import { UserEntity } from '../../domain/entities';
 import { StepOnboardingEnum } from '../../domain/enum';
 import { ICreateUserInput, ICreateUserOutput } from '../../domain/interfaces';
 import { UserRepository } from '../../domain/repositories';
 import { BaseUseCase } from '../base.use-case';
 
+@Injectable()
 export class CreateUserUseCase extends BaseUseCase<
   ICreateUserInput,
   ICreateUserOutput

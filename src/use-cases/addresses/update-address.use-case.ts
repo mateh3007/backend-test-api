@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import {
   IUpdateAddressInput,
   IUpdateAddressOutput,
@@ -5,6 +6,7 @@ import {
 import { AddressRepository } from '../../domain/repositories';
 import { BaseUseCase } from '../base.use-case';
 
+@Injectable()
 export class UpdateAddressUseCase extends BaseUseCase<
   IUpdateAddressInput,
   IUpdateAddressOutput

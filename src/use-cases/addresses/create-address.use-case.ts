@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { AddressEntity } from '../../domain/entities';
 import { AddressableEnum, StepOnboardingEnum } from '../../domain/enum';
 import {
@@ -7,6 +8,7 @@ import {
 import { AddressRepository, UserRepository } from '../../domain/repositories';
 import { BaseUseCase } from '../base.use-case';
 
+@Injectable()
 export class CreateAddressUseCase extends BaseUseCase<
   ICreateAddressInput,
   ICreateAddressOutput

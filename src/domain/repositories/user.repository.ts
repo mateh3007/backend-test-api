@@ -12,5 +12,5 @@ export interface IUserRepositoryFilter {
 }
 
 export abstract class UserRepository extends BaseRepository<UserEntity> {
-  abstract findByFilter(filter: IUserRepositoryFilter): Promise<UserEntity[]>;
+  abstract findByFilter(filter?: IUserRepositoryFilter): Promise<UserEntity[]>;
 }

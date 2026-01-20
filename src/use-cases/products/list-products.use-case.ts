@@ -1,3 +1,4 @@
+import { Injectable, Logger } from '@nestjs/common';
 import { CacheAdapter } from '../../domain/adapters';
 import {
   IListProductsInput,
@@ -9,10 +10,13 @@ import { BaseUseCase } from '../base.use-case';
 const PRODUCTS_LIST_CACHE_TTL = 300; // 5 minutes
 const PRODUCTS_LIST_CACHE_PREFIX = 'products:list:';
 
+@Injectable()
 export class ListProductsUseCase extends BaseUseCase<
   IListProductsInput,
   IListProductsOutput
 > {
+  private readonly logger = new Logger(ListProductsUseCase.name);
+
   constructor(
     private readonly productRepository: ProductRepository,
     private readonly cacheAdapter: CacheAdapter,
@@ -41,8 +45,11 @@ export class ListProductsUseCase extends BaseUseCase<
       await this.cacheAdapter.get<IListProductsOutput>(cacheKey);
 
     if (cachedResult) {
+      this.logger.log(`✅ Cache HIT for products list - Key: ${cacheKey}`);
       return cachedResult;
     }
+
+    this.logger.log(`❌ Cache MISS for products list - Key: ${cacheKey}`);
 
     const filter = {
       name: input.name,
@@ -81,6 +88,9 @@ export class ListProductsUseCase extends BaseUseCase<
     };
 
     await this.cacheAdapter.set(cacheKey, result, PRODUCTS_LIST_CACHE_TTL);
+    this.logger.log(
+      `📦 Cache SET for products list - Key: ${cacheKey} - TTL: ${PRODUCTS_LIST_CACHE_TTL}s`,
+    );
 
     return result;
   }

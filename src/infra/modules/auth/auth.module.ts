@@ -10,9 +10,19 @@ import {
   RegisterController,
 } from '../../../presentation/controllers/auth';
 import { LoginUseCase, RegisterUseCase } from '../../../use-cases/auth';
+import { BcryptModule } from '../bcrypt';
+import { JwtModule } from '../jwt';
+import { DatabaseModule } from '../database';
+import { RedisModule } from '../redis';
 
 @Module({
-  imports: [PassportModule.register({ defaultStrategy: 'jwt' })],
+  imports: [
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    DatabaseModule,
+    BcryptModule,
+    JwtModule,
+    RedisModule,
+  ],
   controllers: [LoginController, RegisterController],
   providers: [
     JwtStrategy,

@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { OrderStatusEnum } from '../../domain/enum';
 import {
   IUpdateOrderStatusInput,
@@ -6,6 +7,7 @@ import {
 import { OrderRepository, ProductRepository } from '../../domain/repositories';
 import { BaseUseCase } from '../base.use-case';
 
+@Injectable()
 export class UpdateOrderStatusUseCase extends BaseUseCase<
   IUpdateOrderStatusInput,
   IUpdateOrderStatusOutput

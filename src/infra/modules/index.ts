@@ -2,6 +2,7 @@ export * from './auth';
 export * from './bcrypt';
 export * from './database';
 export * from './jwt';
+export * from './logger';
 export * from './redis';
 export * from './shipping';
 export * from './users';

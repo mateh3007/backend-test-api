@@ -1,3 +1,4 @@
+import { Injectable, Logger } from '@nestjs/common';
 import { CacheAdapter, ShippingAdapter } from '../../domain/adapters';
 import { AddressableEnum, UserTypeEnum } from '../../domain/enum';
 import {
@@ -12,10 +13,13 @@ import { BaseUseCase } from '../base.use-case';
 
 const SHIPPING_CACHE_TTL = 3600; // 1 hour
 
+@Injectable()
 export class CalculateShippingUseCase extends BaseUseCase<
   ICalculateShippingInput,
   ICalculateShippingOutput
 > {
+  private readonly logger = new Logger(CalculateShippingUseCase.name);
+
   constructor(
     private readonly productRepository: ProductRepository,
     private readonly addressRepository: AddressRepository,
@@ -42,6 +46,9 @@ export class CalculateShippingUseCase extends BaseUseCase<
     }
 
     if (product.freeShipping) {
+      this.logger.log(
+        `🆓 Free shipping for product ${product._id} - No cache needed`,
+      );
       return {
         productId: product._id,
         originZipCode: '',
@@ -73,6 +80,9 @@ export class CalculateShippingUseCase extends BaseUseCase<
     }>(cacheKey);
 
     if (cachedResult) {
+      this.logger.log(
+        `✅ Cache HIT for shipping calculation - From: ${sellerAddress.zipCode} To: ${input.destinationZipCode}`,
+      );
       return {
         productId: product._id,
         originZipCode: sellerAddress.zipCode,
@@ -81,6 +91,10 @@ export class CalculateShippingUseCase extends BaseUseCase<
         estimatedDays: cachedResult.estimatedDays,
       };
     }
+
+    this.logger.log(
+      `❌ Cache MISS for shipping calculation - From: ${sellerAddress.zipCode} To: ${input.destinationZipCode}`,
+    );
 
     const shippingResult = await this.shippingAdapter.calculate({
       originZipCode: sellerAddress.zipCode,
@@ -94,6 +108,10 @@ export class CalculateShippingUseCase extends BaseUseCase<
         estimatedDays: shippingResult.estimatedDays,
       },
       SHIPPING_CACHE_TTL,
+    );
+
+    this.logger.log(
+      `📦 Cache SET for shipping - Key: ${cacheKey} - Cost: R$${shippingResult.cost} - TTL: ${SHIPPING_CACHE_TTL}s`,
     );
 
     return {

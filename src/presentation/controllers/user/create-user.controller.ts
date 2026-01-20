@@ -1,23 +1,47 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+  ApiBody,
+} from '@nestjs/swagger';
 import { Roles } from '../../../infra/commons/decorators';
+import { HateoasBuilder, IHateoasLinks } from '../../../infra/commons/hateoas';
 import { RoleEnum } from '../../../domain/enum';
 import { CreateUserUseCase } from '../../../use-cases/users';
 import { CreateUserDto } from '../../dtos';
-import { BaseController, IApiResponse } from '../base.controller';
 import { ICreateUserOutput } from '../../../domain/interfaces';
 
+interface ICreateUserResponse extends ICreateUserOutput {
+  _links: IHateoasLinks;
+}
+
+@ApiTags('Users')
+@ApiBearerAuth('JWT-auth')
 @Controller('users')
-export class CreateUserController extends BaseController {
-  constructor(private readonly createUserUseCase: CreateUserUseCase) {
-    super();
-  }
+export class CreateUserController {
+  constructor(private readonly createUserUseCase: CreateUserUseCase) {}
 
   @Post()
+  @HttpCode(HttpStatus.CREATED)
   @Roles(RoleEnum.COMPANY_OWNER)
-  async handle(
-    @Body() dto: CreateUserDto,
-  ): Promise<IApiResponse<ICreateUserOutput>> {
+  @ApiOperation({
+    summary: 'Criar usuário',
+    description: 'Cria um novo usuário (apenas COMPANY_OWNER)',
+  })
+  @ApiBody({ type: CreateUserDto })
+  @ApiResponse({ status: 201, description: 'Usuário criado com sucesso' })
+  @ApiResponse({ status: 409, description: 'Email já cadastrado' })
+  async handle(@Body() dto: CreateUserDto): Promise<ICreateUserResponse> {
     const result = await this.createUserUseCase.execute(dto);
-    return this.created(result);
+
+    const links = new HateoasBuilder()
+      .self('/users', 'POST')
+      .add('users', '/users', 'GET')
+      .add('create-address', '/addresses', 'POST')
+      .build();
+
+    return { ...result, _links: links };
   }
 }

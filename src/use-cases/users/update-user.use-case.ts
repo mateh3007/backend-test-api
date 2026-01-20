@@ -1,7 +1,9 @@
+import { Injectable } from '@nestjs/common';
 import { IUpdateUserInput, IUpdateUserOutput } from '../../domain/interfaces';
 import { UserRepository } from '../../domain/repositories';
 import { BaseUseCase } from '../base.use-case';
 
+@Injectable()
 export class UpdateUserUseCase extends BaseUseCase<
   IUpdateUserInput,
   IUpdateUserOutput

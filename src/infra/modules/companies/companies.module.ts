@@ -9,8 +9,10 @@ import {
   CreateCompanyUseCase,
   UpdateCompanyUseCase,
 } from '../../../use-cases/companies';
+import { DatabaseModule } from '../database';
 
 @Module({
+  imports: [DatabaseModule],
   controllers: [CreateCompanyController, UpdateCompanyController],
   providers: [
     {

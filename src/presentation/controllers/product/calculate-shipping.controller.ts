@@ -1,28 +1,46 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
+import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Public } from '../../../infra/commons/decorators';
+import { HateoasBuilder, IHateoasLinks } from '../../../infra/commons/hateoas';
 import { CalculateShippingUseCase } from '../../../use-cases/products';
 import { CalculateShippingDto } from '../../dtos';
-import { BaseController, IApiResponse } from '../base.controller';
 import { ICalculateShippingOutput } from '../../../domain/interfaces';
 
+interface ICalculateShippingResponse extends ICalculateShippingOutput {
+  _links: IHateoasLinks;
+}
+
+@ApiTags('Products')
 @Controller('products')
-export class CalculateShippingController extends BaseController {
+export class CalculateShippingController {
   constructor(
     private readonly calculateShippingUseCase: CalculateShippingUseCase,
-  ) {
-    super();
-  }
+  ) {}
 
   @Public()
   @Get(':id/shipping')
+  @ApiOperation({
+    summary: 'Calcular frete',
+    description: 'Calcula o frete de um produto para um CEP de destino',
+  })
+  @ApiParam({ name: 'id', description: 'ID do produto' })
+  @ApiResponse({ status: 200, description: 'Frete calculado com sucesso' })
+  @ApiResponse({ status: 404, description: 'Produto não encontrado' })
   async handle(
     @Param('id') productId: string,
     @Query() query: CalculateShippingDto,
-  ): Promise<IApiResponse<ICalculateShippingOutput>> {
+  ): Promise<ICalculateShippingResponse> {
     const result = await this.calculateShippingUseCase.execute({
       productId,
       destinationZipCode: query.destinationZipCode,
     });
-    return this.success(result);
+
+    const links = new HateoasBuilder()
+      .self(`/products/${productId}/shipping?destinationZipCode=${query.destinationZipCode}`, 'GET')
+      .add('product', `/products/${productId}`, 'GET')
+      .add('create-order', '/orders', 'POST')
+      .build();
+
+    return { ...result, _links: links };
   }
 }

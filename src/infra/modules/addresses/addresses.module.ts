@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AddressRepository } from '../../../domain/repositories';
-import { AddressPrismaRepository } from '../../database/repositories';
+import { AddressRepository, UserRepository } from '../../../domain/repositories';
+import {
+  AddressPrismaRepository,
+  UserPrismaRepository,
+} from '../../database/repositories';
 import {
   CreateAddressController,
   UpdateAddressController,
@@ -9,13 +12,19 @@ import {
   CreateAddressUseCase,
   UpdateAddressUseCase,
 } from '../../../use-cases/addresses';
+import { DatabaseModule } from '../database';
 
 @Module({
+  imports: [DatabaseModule],
   controllers: [CreateAddressController, UpdateAddressController],
   providers: [
     {
       provide: AddressRepository,
       useClass: AddressPrismaRepository,
+    },
+    {
+      provide: UserRepository,
+      useClass: UserPrismaRepository,
     },
     CreateAddressUseCase,
     UpdateAddressUseCase,
