@@ -210,8 +210,8 @@ docker/
 ### 1. Clone o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/thera-consulting-test.git
-cd thera-consulting-test
+git clone https://github.com/mateh3007/backend-test-api.git
+cd backend-test-api
 ```
 
 ### 2. Instale as dependências
@@ -883,19 +883,14 @@ docker-compose down -v
 4. Push para a branch (`git push origin feature/AmazingFeature`)
 5. Abra um Pull Request
 
----
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
 ---
 
 ## 👤 Autor
 
-**Thera Consulting**
+**Matheus Reis**
 
-- GitHub: [@thera-consulting](https://github.com/thera-consulting)
+- GitHub: [@mateh3007](https://github.com/mateh3007)
 
 ---
 
