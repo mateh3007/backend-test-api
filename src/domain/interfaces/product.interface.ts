@@ -24,3 +24,57 @@ export interface IUpdateProductInput extends Partial<ICreateProductInput>{
 export interface IUpdateProductOutput extends IUpdateProductInput{
   updatedAt: Date;
 }
+
+export interface IListProductsInput {
+  name?: string;
+  category?: CategoryEnum;
+  sellerId?: string;
+  sellerType?: UserTypeEnum;
+  freeShipping?: boolean;
+  priceMin?: number;
+  priceMax?: number;
+  limit?: number;
+  offset?: number;
+}
+
+export interface IProductOutput {
+  id: string;
+  name: string;
+  category: CategoryEnum;
+  description: string;
+  price: number;
+  stock: number;
+  freeShipping: boolean;
+  sellerId: string;
+  sellerType: UserTypeEnum;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IListProductsOutput {
+  products: IProductOutput[];
+  total: number;
+}
+
+export interface IDeleteProductInput {
+  id: string;
+  sellerId: string;
+  sellerType: UserTypeEnum;
+}
+
+export interface IDeleteProductOutput {
+  success: boolean;
+}
+
+export interface ICalculateShippingInput {
+  productId: string;
+  destinationZipCode: string;
+}
+
+export interface ICalculateShippingOutput {
+  productId: string;
+  originZipCode: string;
+  destinationZipCode: string;
+  shippingCost: number;
+  estimatedDays: number;
+}
