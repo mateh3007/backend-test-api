@@ -24,8 +24,9 @@ jobs:
 
             cd ${{ secrets.APP_PATH }}
 
-            echo "📥 Atualizando código"
-            git pull origin main
+            echo "📥 Sincronizando código"
+            git fetch origin main
+            git reset --hard origin/main
 
             echo "📦 Instalando dependências"
             npm ci --omit=dev
