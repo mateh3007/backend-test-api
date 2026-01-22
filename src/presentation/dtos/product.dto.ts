@@ -154,14 +154,6 @@ export class ListProductsQueryDto {
   sellerType?: UserTypeEnum;
 
   @ApiPropertyOptional({
-    description: 'Filtrar por frete grátis',
-    example: true,
-  })
-  @IsOptional()
-  @Transform(({ value }) => value === 'true')
-  freeShipping?: boolean;
-
-  @ApiPropertyOptional({
     description: 'Preço mínimo',
     example: 100,
     minimum: 0,

@@ -9,7 +9,6 @@ import {
 import { CurrentUser } from '../../../infra/commons/decorators';
 import type { ICurrentUser } from '../../../infra/commons/decorators/current-user.decorator';
 import { HateoasBuilder, IHateoasLinks } from '../../../infra/commons/hateoas';
-import { UserTypeEnum } from '../../../domain/enum';
 import { CreateOrderUseCase } from '../../../use-cases/orders';
 import { CreateOrderDto } from '../../dtos';
 import { ICreateOrderOutput } from '../../../domain/interfaces';
@@ -28,12 +27,12 @@ export class CreateOrderController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Criar pedido',
-    description: 'Cria um novo pedido para o usuário autenticado',
+    description: 'Cria um novo pedido para o usuário autenticado. O frete é calculado automaticamente usando o CEP de destino informado e o endereço do vendedor.',
   })
   @ApiBody({ type: CreateOrderDto })
   @ApiResponse({ status: 201, description: 'Pedido criado com sucesso' })
   @ApiResponse({ status: 400, description: 'Estoque insuficiente' })
-  @ApiResponse({ status: 404, description: 'Produto não encontrado' })
+  @ApiResponse({ status: 404, description: 'Produto ou endereço do vendedor não encontrado' })
   async handle(
     @Body() dto: CreateOrderDto,
     @CurrentUser() user: ICurrentUser,
@@ -41,8 +40,6 @@ export class CreateOrderController {
     const result = await this.createOrderUseCase.execute({
       ...dto,
       buyerId: user.id,
-      sellerId: '',
-      sellerType: UserTypeEnum.USER,
     });
 
     const links = new HateoasBuilder()

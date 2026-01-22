@@ -4,6 +4,7 @@ export * from './database';
 export * from './health';
 export * from './jwt';
 export * from './logger';
+export * from './onboarding';
 export * from './redis';
 export * from './shipping';
 export * from './users';

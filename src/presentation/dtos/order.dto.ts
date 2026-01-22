@@ -21,13 +21,12 @@ export class CreateOrderDto {
   productQuantity: number;
 
   @ApiProperty({
-    description: 'Custo do frete em reais',
-    example: 25.5,
-    minimum: 0,
+    description: 'CEP de destino para cálculo do frete',
+    example: '01310-100',
   })
-  @IsNumber()
-  @Min(0)
-  shippingCost: number;
+  @IsString()
+  @IsNotEmpty()
+  destinationZipCode: string;
 }
 
 export class UpdateOrderStatusDto {

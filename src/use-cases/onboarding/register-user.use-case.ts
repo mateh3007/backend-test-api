@@ -7,7 +7,7 @@ import { UserRepository } from '../../domain/repositories';
 import { BaseUseCase } from '../base.use-case';
 
 @Injectable()
-export class RegisterUseCase extends BaseUseCase<
+export class RegisterUserUseCase extends BaseUseCase<
   IRegisterInput,
   IRegisterOutput
 > {

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Order as PrismaOrder, Prisma } from '@prisma/client';
+import { Prisma as PrismaClient } from '@prisma/client';
 import { OrderEntity } from '../../../domain/entities';
 import { OrderStatusEnum, UserTypeEnum } from '../../../domain/enum';
 import {
@@ -39,8 +40,8 @@ export class OrderPrismaRepository
       id: entity._id,
       productId: entity.productId,
       productQuantity: entity.productQuantity,
-      shippingCost: entity.shippingCost,
-      totalPrice: entity.totalPrice,
+      shippingCost: new PrismaClient.Decimal(entity.shippingCost),
+      totalPrice: new PrismaClient.Decimal(entity.totalPrice),
       status: entity.status,
       sellerId: entity.sellerId,
       sellerType: entity.sellerType,

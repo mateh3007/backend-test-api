@@ -5,11 +5,8 @@ import { JwtAuthGuard, RolesGuard } from '../../commons/guards';
 import { JwtStrategy } from '../../commons/strategies';
 import { UserRepository } from '../../../domain/repositories';
 import { UserPrismaRepository } from '../../database/repositories';
-import {
-  LoginController,
-  RegisterController,
-} from '../../../presentation/controllers/auth';
-import { LoginUseCase, RegisterUseCase } from '../../../use-cases/auth';
+import { LoginController } from '../../../presentation/controllers/auth';
+import { LoginUseCase } from '../../../use-cases/auth';
 import { BcryptModule } from '../bcrypt';
 import { JwtModule } from '../jwt';
 import { DatabaseModule } from '../database';
@@ -23,7 +20,7 @@ import { RedisModule } from '../redis';
     JwtModule,
     RedisModule,
   ],
-  controllers: [LoginController, RegisterController],
+  controllers: [LoginController],
   providers: [
     JwtStrategy,
     {
@@ -39,7 +36,6 @@ import { RedisModule } from '../redis';
       useClass: UserPrismaRepository,
     },
     LoginUseCase,
-    RegisterUseCase,
   ],
   exports: [PassportModule],
 })

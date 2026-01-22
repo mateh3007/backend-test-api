@@ -66,13 +66,14 @@ async function bootstrap() {
       },
       'JWT-auth',
     )
-    .addTag('Health', 'Health check e monitoramento')
-    .addTag('Auth', 'Autenticação e registro de usuários')
-    .addTag('Users', 'Gerenciamento de usuários')
-    .addTag('Companies', 'Gerenciamento de empresas')
-    .addTag('Addresses', 'Gerenciamento de endereços')
-    .addTag('Products', 'Gerenciamento de produtos')
-    .addTag('Orders', 'Gerenciamento de pedidos')
+      .addTag('Health', 'Health check e monitoramento')
+      .addTag('Auth', 'Autenticação e registro de usuários')
+      .addTag('Onboarding', 'Registro de empresas e onboarding')
+      .addTag('Users', 'Gerenciamento de usuários')
+      .addTag('Companies', 'Gerenciamento de empresas')
+      .addTag('Addresses', 'Gerenciamento de endereços')
+      .addTag('Products', 'Gerenciamento de produtos')
+      .addTag('Orders', 'Gerenciamento de pedidos')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

@@ -4,14 +4,19 @@ import { UserTypeEnum } from '../enum/user.enum';
 export interface ICreateOrderInput {
   productId: string;
   productQuantity: number;
-  shippingCost: number;
-  sellerId: string;
-  sellerType: UserTypeEnum;
+  destinationZipCode: string;
   buyerId: string;
 }
 
-export interface ICreateOrderOutput extends ICreateOrderInput {
+export interface ICreateOrderOutput {
   id: string;
+  productId: string;
+  productQuantity: number;
+  shippingCost: number;
+  totalPrice: number;
+  sellerId: string;
+  sellerType: UserTypeEnum;
+  buyerId: string;
   createdAt: Date;
 }
 

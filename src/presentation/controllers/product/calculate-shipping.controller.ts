@@ -1,5 +1,10 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Public } from '../../../infra/commons/decorators';
 import { HateoasBuilder, IHateoasLinks } from '../../../infra/commons/hateoas';
 import { CalculateShippingUseCase } from '../../../use-cases/products';
@@ -11,6 +16,7 @@ interface ICalculateShippingResponse extends ICalculateShippingOutput {
 }
 
 @ApiTags('Products')
+@Public()
 @Controller('products')
 export class CalculateShippingController {
   constructor(
@@ -21,11 +27,11 @@ export class CalculateShippingController {
   @Get(':id/shipping')
   @ApiOperation({
     summary: 'Calcular frete',
-    description: 'Calcula o frete de um produto para um CEP de destino',
+    description: 'Calcula o frete de um produto usando o endereço do vendedor como origem',
   })
   @ApiParam({ name: 'id', description: 'ID do produto' })
   @ApiResponse({ status: 200, description: 'Frete calculado com sucesso' })
-  @ApiResponse({ status: 404, description: 'Produto não encontrado' })
+  @ApiResponse({ status: 404, description: 'Produto ou endereço do vendedor não encontrado' })
   async handle(
     @Param('id') productId: string,
     @Query() query: CalculateShippingDto,

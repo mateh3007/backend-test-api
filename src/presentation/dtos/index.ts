@@ -4,3 +4,4 @@ export * from './company.dto';
 export * from './address.dto';
 export * from './product.dto';
 export * from './order.dto';
+export * from './onboarding.dto';

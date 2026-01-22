@@ -39,33 +39,14 @@ export class UpdateOrderStatusUseCase extends BaseUseCase<
       throw new Error('Cannot revert a confirmed order to pending');
     }
 
-    // Update stock when order is confirmed
-    if (
-      input.status === OrderStatusEnum.CONFIRMED &&
-      order.status === OrderStatusEnum.PENDING
-    ) {
-      const product = await this.productRepository.findById(order.productId);
-
-      if (!product) {
-        throw new Error('Product not found');
-      }
-
-      if (product.stock < order.productQuantity) {
-        throw new Error('Insufficient stock to confirm order');
-      }
-
-      product.stock = product.stock - order.productQuantity;
-      await this.productRepository.update(product);
-    }
-
     // Restore stock when order is cancelled
-    if (
-      input.status === OrderStatusEnum.CANCELLED &&
-      order.status === OrderStatusEnum.CONFIRMED
-    ) {
+    // O estoque já foi decrementado quando o pedido foi criado (PENDING)
+    // Então precisamos restaurar se cancelar um pedido PENDING ou CONFIRMED
+    if (input.status === OrderStatusEnum.CANCELLED) {
       const product = await this.productRepository.findById(order.productId);
 
       if (product) {
+        // Restaurar o estoque (já verificamos no início que não está cancelado)
         product.stock = product.stock + order.productQuantity;
         await this.productRepository.update(product);
       }

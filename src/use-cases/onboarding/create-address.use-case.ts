@@ -5,7 +5,10 @@ import {
   ICreateAddressInput,
   ICreateAddressOutput,
 } from '../../domain/interfaces';
-import { AddressRepository, UserRepository } from '../../domain/repositories';
+import {
+  AddressRepository,
+  UserRepository,
+} from '../../domain/repositories';
 import { BaseUseCase } from '../base.use-case';
 
 @Injectable()

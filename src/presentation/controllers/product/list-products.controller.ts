@@ -42,6 +42,7 @@ export class ListProductsController {
   async handle(
     @Query() query: ListProductsQueryDto,
   ): Promise<IListProductsResponse> {
+    console.log(query)
     const result = await this.listProductsUseCase.execute(query);
 
     const productsWithLinks: IProductWithLinks[] = result.products.map(

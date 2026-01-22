@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import {
   ShippingAdapter,
   IShippingCalculateInput,
@@ -52,7 +52,7 @@ export class ShippingIntegration extends ShippingAdapter {
 
     if (!data.valor || !data.prazo) {
       this.logger.warn(`⚠️ Shipping not available for this route`);
-      throw new Error('Shipping not available for this route');
+      throw new BadRequestException('Shipping not available for this route');
     }
 
     const cost = parseFloat(data.valor);

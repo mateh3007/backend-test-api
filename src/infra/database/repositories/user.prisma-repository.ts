@@ -27,7 +27,9 @@ export class UserPrismaRepository
     user.phone = prismaModel.phone;
     user.stepOnboarding = prismaModel.stepOnboarding as StepOnboardingEnum;
     user.role = prismaModel.role as RoleEnum;
-    user.companyId = prismaModel.companyId || '';
+    if (prismaModel.companyId) {
+      user.companyId = prismaModel.companyId;
+    }
     user._createdAt = prismaModel.createdAt;
     user._updatedAt = prismaModel.updatedAt;
     return user;

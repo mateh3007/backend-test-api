@@ -45,18 +45,6 @@ export class CalculateShippingUseCase extends BaseUseCase<
       throw new Error('Product not found');
     }
 
-    if (product.freeShipping) {
-      this.logger.log(
-        `🆓 Free shipping for product ${product._id} - No cache needed`,
-      );
-      return {
-        productId: product._id,
-        originZipCode: '',
-        destinationZipCode: input.destinationZipCode,
-        shippingCost: 0,
-        estimatedDays: 0,
-      };
-    }
 
     const sellerAddress =
       await this.addressRepository.findByAddressableIdAndType(
@@ -68,6 +56,19 @@ export class CalculateShippingUseCase extends BaseUseCase<
 
     if (!sellerAddress) {
       throw new Error('Seller address not found');
+    }
+
+    if (product.freeShipping) {
+      this.logger.log(
+        `🆓 Free shipping for product ${product._id} - Origin: ${sellerAddress.zipCode}`,
+      );
+      return {
+        productId: product._id,
+        originZipCode: sellerAddress.zipCode,
+        destinationZipCode: input.destinationZipCode,
+        shippingCost: 0,
+        estimatedDays: 0,
+      };
     }
 
     const cacheKey = this.buildCacheKey(

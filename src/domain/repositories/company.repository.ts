@@ -5,6 +5,7 @@ import { IAddressRepositoryFilter } from './address.repository';
 export interface ICompanyRepositoryFilter {
   corporateName?: string;
   cnpj?: string;
+  email?: string;
   address?: IAddressRepositoryFilter;
 }
 

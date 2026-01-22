@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Product as PrismaProduct, Prisma } from '@prisma/client';
+import { Prisma as PrismaClient } from '@prisma/client';
 import { ProductEntity } from '../../../domain/entities';
 import { CategoryEnum, UserTypeEnum } from '../../../domain/enum';
 import {
@@ -40,7 +41,7 @@ export class ProductPrismaRepository
       name: entity.name,
       category: entity.category,
       description: entity.description,
-      price: entity.price,
+      price: new PrismaClient.Decimal(entity.price),
       stock: entity.stock,
       freeShipping: entity.freeShipping,
       sellerId: entity.sellerId,
@@ -60,8 +61,6 @@ export class ProductPrismaRepository
     if (filter.category) where.category = filter.category;
     if (filter.sellerId) where.sellerId = filter.sellerId;
     if (filter.sellerType) where.sellerType = filter.sellerType;
-    if (filter.freeShipping !== undefined)
-      where.freeShipping = filter.freeShipping;
 
     if (filter.price) {
       where.price = {};

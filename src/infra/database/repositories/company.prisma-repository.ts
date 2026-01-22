@@ -51,6 +51,7 @@ export class CompanyPrismaRepository
       };
     }
     if (filter.cnpj) where.cnpj = filter.cnpj;
+    if (filter.email) where.email = filter.email;
 
     const results = await this.prisma.company.findMany({ where });
     return results.map((result) => this.toDomain(result));

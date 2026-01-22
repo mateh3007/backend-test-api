@@ -82,6 +82,7 @@ export class LoginUseCase extends BaseUseCase<ILoginInput, ILoginOutput> {
       sub: cached.id,
       email: cached.email,
       role: cached.role,
+      companyId: cached.companyId,
     });
 
     this.logger.log(`🔐 Login successful - ${cached.email}`);
