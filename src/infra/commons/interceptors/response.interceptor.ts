@@ -27,6 +27,10 @@ export class ResponseInterceptor<T>
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest();
 
+    if (request.url?.startsWith('/api/docs') || request.url?.startsWith('/api/health')) {
+      return next.handle();
+    }
+
     return next.handle().pipe(
       map((data) => {
         const contentType = response.getHeader('content-type');
