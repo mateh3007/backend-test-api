@@ -27,14 +27,19 @@ export class ResponseInterceptor<T>
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest();
 
+    const url = request.url ?? '';
+
+    if (
+      url.startsWith('/api/docs') ||
+      url.startsWith('/api/health')
+    ) {
+      return next.handle();
+    }
+
     return next.handle().pipe(
       map((data) => {
         const contentType = response.getHeader('content-type');
 
-        if (request.url?.startsWith('/api/docs') || request.url?.startsWith('/api/health')) {
-          return data;
-        }
-    
         if (
           typeof contentType === 'string' &&
           !contentType.includes('application/json')
