@@ -1,6 +1,7 @@
 export * from './auth';
 export * from './bcrypt';
 export * from './database';
+export * from './health';
 export * from './jwt';
 export * from './logger';
 export * from './redis';

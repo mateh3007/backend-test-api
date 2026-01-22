@@ -29,6 +29,7 @@ Uma API RESTful completa para gerenciamento de e-commerce, desenvolvida com **Ne
 - [Testes](#-testes)
 - [Swagger](#-swagger)
 - [Logs](#-logs)
+- [Deploy em Produção](#-deploy-em-produção)
 
 ---
 
@@ -844,7 +845,9 @@ A aplicação gera logs estruturados para monitoramento:
 
 ---
 
-## 🐳 Docker
+## 🐳 Docker (Apenas para Desenvolvimento Local)
+
+> **Nota:** Docker é usado apenas para desenvolvimento local. Em produção, a aplicação roda diretamente com **PM2** na EC2.
 
 ### Serviços
 
@@ -872,6 +875,10 @@ docker-compose up -d --build
 # Limpar volumes (CUIDADO: apaga dados)
 docker-compose down -v
 ```
+
+### Para Produção
+
+Em produção, use **PM2** diretamente na EC2. Consulte [DEPLOY.md](./DEPLOY.md) para o guia completo.
 
 ---
 
