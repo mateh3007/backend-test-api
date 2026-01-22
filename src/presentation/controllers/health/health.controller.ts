@@ -2,6 +2,7 @@ import { Controller, Get, Inject } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PrismaService } from '../../../infra/database/prisma/prisma.service';
 import { CacheAdapter } from '../../../domain/adapters';
+import { Public } from 'src/infra/commons/decorators/public.decorator';
 
 interface IHealthCheck {
   status: 'ok' | 'error';
@@ -23,6 +24,7 @@ interface IHealthCheck {
 }
 
 @ApiTags('Health')
+@Public()
 @Controller('health')
 export class HealthController {
   constructor(

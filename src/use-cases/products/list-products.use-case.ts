@@ -87,10 +87,14 @@ export class ListProductsUseCase extends BaseUseCase<
       total: products.length,
     };
 
-    await this.cacheAdapter.set(cacheKey, result, PRODUCTS_LIST_CACHE_TTL);
-    this.logger.log(
-      `📦 Cache SET for products list - Key: ${cacheKey} - TTL: ${PRODUCTS_LIST_CACHE_TTL}s`,
-    );
+    try {
+      await this.cacheAdapter.set(cacheKey, result, PRODUCTS_LIST_CACHE_TTL);
+      this.logger.log(
+        `📦 Cache SET for products list - Key: ${cacheKey} - TTL: ${PRODUCTS_LIST_CACHE_TTL}s`,
+      );
+    } catch (error) {
+      this.logger.warn(`⚠️ Failed to cache products list (non-critical): ${error instanceof Error ? error.message : String(error)}`);
+    }
 
     return result;
   }

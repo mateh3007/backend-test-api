@@ -116,8 +116,9 @@ export class RedisIntegration extends CacheAdapter implements OnModuleDestroy {
 
       this.logger.log(`💾 Redis SET [${key}] - TTL: ${ttl}s`);
     } catch (error) {
-      this.logger.error(`❌ Redis SET error: ${error instanceof Error ? error.message : String(error)}`);
-      throw error;
+      this.logger.warn(
+        `⚠️ Redis SET failed (non-critical): ${error instanceof Error ? error.message : String(error)} - Key: ${key}`,
+      );
     }
   }
 
@@ -133,8 +134,9 @@ export class RedisIntegration extends CacheAdapter implements OnModuleDestroy {
 
       this.logger.log(`🗑️ Redis DEL [${key}]`);
     } catch (error) {
-      this.logger.error(`❌ Redis DEL error: ${error instanceof Error ? error.message : String(error)}`);
-      throw error;
+      this.logger.warn(
+        `⚠️ Redis DEL failed (non-critical): ${error instanceof Error ? error.message : String(error)} - Key: ${key}`,
+      );
     }
   }
 
@@ -167,8 +169,9 @@ export class RedisIntegration extends CacheAdapter implements OnModuleDestroy {
         this.logger.log(`🗑️ Redis DEL by pattern [${pattern}] - No keys found`);
       }
     } catch (error) {
-      this.logger.error(`❌ Redis DEL by pattern error: ${error instanceof Error ? error.message : String(error)}`);
-      throw error;
+      this.logger.warn(
+        `⚠️ Redis DEL by pattern failed (non-critical): ${error instanceof Error ? error.message : String(error)} - Pattern: ${pattern}`,
+      );
     }
   }
 }

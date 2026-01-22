@@ -61,8 +61,12 @@ export class LoginUseCase extends BaseUseCase<ILoginInput, ILoginOutput> {
         companyId: user.companyId,
       };
 
-      await this.cacheAdapter.set(cacheKey, cached, USER_CACHE_TTL);
-      this.logger.log(`📦 Cache SET - Email: ${input.email}`);
+      try {
+        await this.cacheAdapter.set(cacheKey, cached, USER_CACHE_TTL);
+        this.logger.log(`📦 Cache SET - Email: ${input.email}`);
+      } catch (error) {
+        this.logger.warn(`⚠️ Failed to cache user (non-critical): ${error instanceof Error ? error.message : String(error)}`);
+      }
     }
 
     const isPasswordValid = await this.bcryptAdapter.compare(

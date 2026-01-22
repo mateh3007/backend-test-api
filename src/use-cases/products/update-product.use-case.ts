@@ -58,10 +58,14 @@ export class UpdateProductUseCase extends BaseUseCase<
 
     this.logger.log(`✏️ Product updated: ${updatedProduct._id}`);
 
-    await this.cacheAdapter.deleteByPattern(`${PRODUCTS_LIST_CACHE_PREFIX}*`);
-    this.logger.log(
-      `🗑️ Cache INVALIDATED - Pattern: ${PRODUCTS_LIST_CACHE_PREFIX}*`,
-    );
+    try {
+      await this.cacheAdapter.deleteByPattern(`${PRODUCTS_LIST_CACHE_PREFIX}*`);
+      this.logger.log(
+        `🗑️ Cache INVALIDATED - Pattern: ${PRODUCTS_LIST_CACHE_PREFIX}*`,
+      );
+    } catch (error) {
+      this.logger.warn(`⚠️ Failed to invalidate cache (non-critical): ${error instanceof Error ? error.message : String(error)}`);
+    }
 
     return {
       id: updatedProduct._id,

@@ -101,18 +101,21 @@ export class CalculateShippingUseCase extends BaseUseCase<
       destinationZipCode: input.destinationZipCode,
     });
 
-    await this.cacheAdapter.set(
-      cacheKey,
-      {
-        cost: shippingResult.cost,
-        estimatedDays: shippingResult.estimatedDays,
-      },
-      SHIPPING_CACHE_TTL,
-    );
-
-    this.logger.log(
-      `📦 Cache SET for shipping - Key: ${cacheKey} - Cost: R$${shippingResult.cost} - TTL: ${SHIPPING_CACHE_TTL}s`,
-    );
+    try {
+      await this.cacheAdapter.set(
+        cacheKey,
+        {
+          cost: shippingResult.cost,
+          estimatedDays: shippingResult.estimatedDays,
+        },
+        SHIPPING_CACHE_TTL,
+      );
+      this.logger.log(
+        `📦 Cache SET for shipping - Key: ${cacheKey} - Cost: R$${shippingResult.cost} - TTL: ${SHIPPING_CACHE_TTL}s`,
+      );
+    } catch (error) {
+      this.logger.warn(`⚠️ Failed to cache shipping (non-critical): ${error instanceof Error ? error.message : String(error)}`);
+    }
 
     return {
       productId: product._id,

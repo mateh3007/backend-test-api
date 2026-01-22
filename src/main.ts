@@ -48,37 +48,35 @@ async function bootstrap() {
     }),
   );
 
-  // Swagger documentation (apenas em desenvolvimento)
-  if (process.env.NODE_ENV !== 'production') {
-    const config = new DocumentBuilder()
-      .setTitle('Thera Consulting API')
-      .setDescription(
-        'API para gerenciamento de usuários, empresas, produtos e pedidos',
-      )
-      .setVersion('1.0')
-      .addBearerAuth(
-        {
-          type: 'http',
-          scheme: 'bearer',
-          bearerFormat: 'JWT',
-          name: 'Authorization',
-          description: 'Enter JWT token',
-          in: 'header',
-        },
-        'JWT-auth',
-      )
-      .addTag('Health', 'Health check e monitoramento')
-      .addTag('Auth', 'Autenticação e registro de usuários')
-      .addTag('Users', 'Gerenciamento de usuários')
-      .addTag('Companies', 'Gerenciamento de empresas')
-      .addTag('Addresses', 'Gerenciamento de endereços')
-      .addTag('Products', 'Gerenciamento de produtos')
-      .addTag('Orders', 'Gerenciamento de pedidos')
-      .build();
+  // Swagger documentation
+  const config = new DocumentBuilder()
+    .setTitle('Thera Consulting API')
+    .setDescription(
+      'API para gerenciamento de usuários, empresas, produtos e pedidos',
+    )
+    .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth',
+    )
+    .addTag('Health', 'Health check e monitoramento')
+    .addTag('Auth', 'Autenticação e registro de usuários')
+    .addTag('Users', 'Gerenciamento de usuários')
+    .addTag('Companies', 'Gerenciamento de empresas')
+    .addTag('Addresses', 'Gerenciamento de endereços')
+    .addTag('Products', 'Gerenciamento de produtos')
+    .addTag('Orders', 'Gerenciamento de pedidos')
+    .build();
 
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api/docs', app, document);
-  }
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
 
   const port = parseInt(process.env.PORT || '3000', 10);
   await app.listen(port, '0.0.0.0');
@@ -88,12 +86,10 @@ async function bootstrap() {
     'Bootstrap',
   );
   
-  if (process.env.NODE_ENV !== 'production') {
-    logger.log(
-      `📚 Swagger docs available at: http://localhost:${port}/api/docs`,
-      'Bootstrap',
-    );
-  }
+  logger.log(
+    `📚 Swagger docs available at: http://localhost:${port}/api/docs`,
+    'Bootstrap',
+  );
   
   logger.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`, 'Bootstrap');
 }
