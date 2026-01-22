@@ -28,3 +28,31 @@ export interface IUpdateOrderStatusInput {
 export interface IUpdateOrderStatusOutput extends IUpdateOrderStatusInput {
   updatedAt: Date;
 }
+
+export interface IListOrdersInput {
+  status?: OrderStatusEnum;
+  buyerId?: string;
+  sellerId?: string;
+  sellerType?: UserTypeEnum;
+  limit?: number;
+  offset?: number;
+}
+
+export interface IOrderOutput {
+  id: string;
+  productId: string;
+  productQuantity: number;
+  shippingCost: number;
+  totalPrice: number;
+  status: OrderStatusEnum;
+  sellerId: string;
+  sellerType: UserTypeEnum;
+  buyerId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IListOrdersOutput {
+  orders: IOrderOutput[];
+  total: number;
+}

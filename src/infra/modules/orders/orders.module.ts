@@ -11,10 +11,14 @@ import {
 } from '../../database/repositories';
 import {
   CreateOrderController,
+  GetOrderByIdController,
+  ListOrdersController,
   UpdateOrderStatusController,
 } from '../../../presentation/controllers/order';
 import {
   CreateOrderUseCase,
+  GetOrderByIdUseCase,
+  ListOrdersUseCase,
   UpdateOrderStatusUseCase,
 } from '../../../use-cases/orders';
 import { DatabaseModule } from '../database';
@@ -23,7 +27,12 @@ import { ShippingModule } from '../shipping';
 
 @Module({
   imports: [DatabaseModule, AddressesModule, ShippingModule],
-  controllers: [CreateOrderController, UpdateOrderStatusController],
+  controllers: [
+    CreateOrderController,
+    GetOrderByIdController,
+    ListOrdersController,
+    UpdateOrderStatusController,
+  ],
   providers: [
     {
       provide: OrderRepository,
@@ -38,6 +47,8 @@ import { ShippingModule } from '../shipping';
       useClass: AddressPrismaRepository,
     },
     CreateOrderUseCase,
+    GetOrderByIdUseCase,
+    ListOrdersUseCase,
     UpdateOrderStatusUseCase,
   ],
   exports: [OrderRepository],

@@ -28,13 +28,23 @@ export class ResponseInterceptor<T>
     const request = ctx.getRequest();
 
     return next.handle().pipe(
-      map((data) => ({
-        success: true,
-        data,
-        timestamp: new Date().toISOString(),
-        path: request.url,
-        statusCode: response.statusCode,
-      })),
+      map((data) => {
+        const contentType = response.getHeader('content-type');
+        if (
+          typeof contentType === 'string' &&
+          !contentType.includes('application/json')
+        ) {
+          return data;
+        }
+
+        return {
+          success: true,
+          data,
+          timestamp: new Date().toISOString(),
+          path: request.url,
+          statusCode: response.statusCode,
+        };
+      }),
     );
   }
 }

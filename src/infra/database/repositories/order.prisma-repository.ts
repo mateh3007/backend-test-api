@@ -53,12 +53,28 @@ export class OrderPrismaRepository
     const where: Prisma.OrderWhereInput = {};
 
     if (filter.status) where.status = filter.status;
+    if (filter.buyerId) where.buyerId = filter.buyerId;
+    if (filter.sellerId) where.sellerId = filter.sellerId;
+    if (filter.sellerType) where.sellerType = filter.sellerType;
 
     const results = await this.prisma.order.findMany({
       where,
       orderBy: { createdAt: 'desc' },
+      take: filter.limit,
+      skip: filter.offset,
     });
 
     return results.map((result) => this.toDomain(result));
+  }
+
+  async countByFilter(filter: IOrderRepositoryFilter): Promise<number> {
+    const where: Prisma.OrderWhereInput = {};
+
+    if (filter.status) where.status = filter.status;
+    if (filter.buyerId) where.buyerId = filter.buyerId;
+    if (filter.sellerId) where.sellerId = filter.sellerId;
+    if (filter.sellerType) where.sellerType = filter.sellerType;
+
+    return this.prisma.order.count({ where });
   }
 }
