@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { AppLoggerService } from './infra/commons/logger';
 import { ResponseInterceptor } from './infra/commons/interceptors';
@@ -14,18 +13,6 @@ async function bootstrap() {
 
   const logger = app.get(AppLoggerService);
   app.useLogger(logger);
-  
-  // Security headers
-  app.use(helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: [`'self'`],
-        styleSrc: [`'self'`, `'unsafe-inline'`],
-        imgSrc: [`'self'`, 'data:', 'validator.swagger.io'],
-        scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
-      },
-    },
-  }));
 
   // CORS configuration
   const corsOrigin = process.env.CORS_ORIGIN || '*';

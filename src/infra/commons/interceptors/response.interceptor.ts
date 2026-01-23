@@ -22,29 +22,31 @@ export class ResponseInterceptor<T>
 {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     const request = context.switchToHttp().getRequest();
+    const response = context.switchToHttp().getResponse();
     const url = request.url;
-  
-    if (url.includes('api/docs') || url.includes('favicon.ico')) {
+
+    // 1. Lista de exclusão rigorosa para o Swagger e arquivos estáticos
+    if (
+      url.includes('/api/docs') || 
+      url.includes('swagger-ui') || 
+      url.includes('favicon.ico')
+    ) {
       return next.handle();
     }
-  
+
     return next.handle().pipe(
       map((data) => {
-        const response = context.switchToHttp().getResponse();
-        
-        if (data instanceof StreamableFile || !data) {
+        const contentType = response.getHeader('content-type');
+        if (contentType && !contentType.toString().includes('application/json')) {
           return data;
         }
-  
-        if (url.endsWith('-json')) {
-          return data;
-        }
-  
+
         return {
           success: true,
-          data,
+          data: data ?? null,
           timestamp: new Date().toISOString(),
           path: url,
+          statusCode: response.statusCode,
         };
       }),
     );
