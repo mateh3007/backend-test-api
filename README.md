@@ -802,6 +802,12 @@ Success Rate: 96%
 
 A documentação interativa da API está disponível em:
 
+**Produção:**
+```
+http://44.201.13.168:3000/api/docs
+```
+
+**Desenvolvimento Local:**
 ```
 http://localhost:3000/api/docs
 ```
@@ -876,9 +882,225 @@ docker-compose up -d --build
 docker-compose down -v
 ```
 
-### Para Produção
+---
 
-Em produção, use **PM2** diretamente na EC2. Consulte [DEPLOY.md](./DEPLOY.md) para o guia completo.
+## 🚀 Deploy em Produção
+
+A aplicação está deployada na **AWS EC2** utilizando os seguintes serviços:
+
+### Infraestrutura
+
+| Serviço | Descrição | Uso |
+|---------|-----------|-----|
+| **AWS EC2** | Servidor de aplicação | Host da API NestJS |
+| **Neon** | Database PostgreSQL | Banco de dados gerenciado |
+| **Upstash** | Redis gerenciado | Cache distribuído |
+| **PM2** | Process Manager | Gerenciamento de processos Node.js |
+
+### URL da API em Produção
+
+- **API Base:** `http://44.201.13.168:3000`
+- **Swagger Docs:** `http://44.201.13.168:3000/api/docs`
+- **Health Check:** `http://44.201.13.168:3000/health`
+
+### Configuração do Ambiente
+
+#### Variáveis de Ambiente Necessárias
+
+```bash
+# Ambiente
+NODE_ENV=production
+PORT=3000
+
+# Database (Neon)
+DATABASE_URL=postgresql://user:password@host.neon.tech/dbname?sslmode=require
+
+# Redis (Upstash)
+REDIS_REST_URL=https://your-redis.upstash.io
+REDIS_REST_TOKEN=your-upstash-token
+
+# JWT
+JWT_SECRET=your-jwt-secret
+JWT_EXPIRES_IN=7d
+
+# CORS
+CORS_ORIGIN=*
+
+# Shipping API (opcional)
+SHIPPING_API_URL=your-shipping-api-url
+SHIPPING_API_KEY=your-shipping-api-key
+```
+
+### Processo de Deploy
+
+#### 1. Preparação do Servidor EC2
+
+```bash
+# Conectar ao servidor EC2
+ssh -i your-key.pem ubuntu@44.201.13.168
+
+# Instalar Node.js (se necessário)
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Instalar PM2 globalmente
+sudo npm install -g pm2
+
+# Instalar dependências do sistema
+sudo apt-get update
+sudo apt-get install -y git
+```
+
+#### 2. Clonar e Configurar o Repositório
+
+```bash
+# Clonar o repositório
+git clone https://github.com/seu-usuario/thera-consulting-test.git
+cd thera-consulting-test
+
+# Criar arquivo .env com as variáveis de ambiente
+cp .env.example .env
+nano .env  # Editar com as credenciais corretas
+```
+
+#### 3. Configurar Neon Database
+
+1. Acesse [Neon Console](https://console.neon.tech)
+2. Crie um novo projeto PostgreSQL
+3. Copie a connection string (DATABASE_URL)
+4. Adicione ao arquivo `.env`
+
+#### 4. Configurar Upstash Redis
+
+1. Acesse [Upstash Console](https://console.upstash.com)
+2. Crie um novo database Redis
+3. Copie `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN`
+4. Adicione ao arquivo `.env` como `REDIS_REST_URL` e `REDIS_REST_TOKEN`
+
+#### 5. Executar Deploy
+
+```bash
+# Executar script de deploy
+chmod +x scripts/deploy.sh
+./scripts/deploy.sh
+```
+
+O script de deploy automaticamente:
+- ✅ Instala dependências (`npm ci --production`)
+- ✅ Gera cliente Prisma (`npx prisma generate`)
+- ✅ Executa migrations (`npx prisma migrate deploy`)
+- ✅ Faz build da aplicação (`npm run build`)
+- ✅ Inicia/reinicia com PM2 (`pm2 reload`)
+
+#### 6. Gerenciamento com PM2
+
+```bash
+# Ver status da aplicação
+pm2 status
+
+# Ver logs em tempo real
+pm2 logs thera-api
+
+# Reiniciar aplicação
+pm2 restart thera-api
+
+# Parar aplicação
+pm2 stop thera-api
+
+# Iniciar aplicação
+pm2 start ecosystem.config.js
+
+# Salvar configuração do PM2 (para iniciar após reboot)
+pm2 save
+
+# Configurar PM2 para iniciar no boot do sistema
+pm2 startup
+pm2 save
+```
+
+### Configuração do PM2
+
+A aplicação utiliza o arquivo `ecosystem.config.js` com as seguintes configurações:
+
+- **Modo:** Cluster (múltiplas instâncias)
+- **Instâncias:** Máximo disponível (baseado em CPUs)
+- **Memória:** Restart automático ao atingir 500MB
+- **Logs:** Armazenados em `./logs/pm2-*.log`
+- **Auto-restart:** Habilitado
+
+### Monitoramento
+
+#### Logs da Aplicação
+
+```bash
+# Logs do PM2
+pm2 logs thera-api
+
+# Logs de erro
+tail -f logs/pm2-error.log
+
+# Logs de saída
+tail -f logs/pm2-out.log
+```
+
+#### Health Check
+
+A aplicação expõe um endpoint de health check:
+
+```bash
+curl http://44.201.13.168:3000/health
+```
+
+### Atualização (Re-deploy)
+
+Para atualizar a aplicação após mudanças no código:
+
+```bash
+# No servidor EC2
+cd /path/to/thera-consulting-test
+
+# Atualizar código
+git pull origin main
+
+# Executar deploy novamente
+./scripts/deploy.sh
+```
+
+O PM2 fará um **reload sem downtime** (zero downtime deployment), mantendo a aplicação disponível durante a atualização.
+
+### Segurança
+
+- ✅ Firewall configurado para permitir apenas porta 3000
+- ✅ HTTPS recomendado (usar Nginx como reverse proxy)
+- ✅ Variáveis sensíveis em `.env` (não commitadas)
+- ✅ Helmet.js para headers de segurança
+- ✅ CORS configurado adequadamente
+
+### Troubleshooting
+
+#### Aplicação não inicia
+
+```bash
+# Verificar logs
+pm2 logs thera-api --lines 100
+
+# Verificar variáveis de ambiente
+pm2 env 0
+
+# Verificar se a porta está em uso
+sudo lsof -i :3000
+```
+
+#### Erro de conexão com database
+
+- Verificar `DATABASE_URL` no `.env`
+- Verificar se o IP da EC2 está autorizado no Neon
+- Verificar SSL mode na connection string
+
+#### Erro de conexão com Redis
+
+- Verificar `REDIS_REST_URL` e `REDIS_REST_TOKEN` no `.env`
+- Verificar se o token do Upstash tem permissões de leitura/escrita
 
 ---
 
