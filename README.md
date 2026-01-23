@@ -1051,9 +1051,44 @@ A aplicação expõe um endpoint de health check:
 curl http://44.201.13.168:3000/health
 ```
 
-### Atualização (Re-deploy)
+### Deploy Automatizado (CI/CD)
 
-Para atualizar a aplicação após mudanças no código:
+A aplicação utiliza **GitHub Actions** para deploy automatizado. Sempre que houver um push para a branch `main`, o deploy é executado automaticamente.
+
+#### Configuração do GitHub Actions
+
+O workflow está configurado em `.github/workflows/deploy.yml` e executa os seguintes passos:
+
+1. ✅ Checkout do código
+2. ✅ Conexão SSH com a EC2
+3. ✅ Sincronização do código (`git fetch` e `git reset`)
+4. ✅ Instalação de dependências (`npm ci`)
+5. ✅ Geração do cliente Prisma (`npx prisma generate`)
+6. ✅ Execução de migrations (`npx prisma migrate deploy`)
+7. ✅ Build da aplicação (`npm run build`)
+8. ✅ Reload do PM2 (`pm2 restart`)
+
+#### Secrets Necessários no GitHub
+
+Configure os seguintes secrets no repositório GitHub (Settings → Secrets and variables → Actions):
+
+- `SSH_HOST`: IP ou hostname da EC2 (ex: `44.201.13.168`)
+- `SSH_USER`: Usuário SSH (ex: `ubuntu`)
+- `SSH_KEY`: Chave privada SSH para acesso à EC2
+- `APP_PATH`: Caminho da aplicação na EC2 (ex: `/home/ubuntu/thera-consulting-test`)
+
+#### Como Funciona
+
+1. **Desenvolvedor faz push para `main`**
+2. **GitHub Actions detecta o push**
+3. **Workflow executa automaticamente**
+4. **Aplicação é atualizada na EC2 sem downtime**
+
+O PM2 fará um **reload sem downtime** (zero downtime deployment), mantendo a aplicação disponível durante a atualização.
+
+### Atualização Manual (Re-deploy)
+
+Para atualizar manualmente a aplicação (caso o CI/CD não esteja configurado):
 
 ```bash
 # No servidor EC2
