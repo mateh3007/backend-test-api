@@ -162,13 +162,16 @@ describe('CalculateShippingUseCase', () => {
 
       const product = mockProductEntity();
       product.freeShipping = true;
+      const address = mockAddressEntity();
 
       productRepository.findById.mockResolvedValue(product);
+      addressRepository.findByAddressableIdAndType.mockResolvedValue(address);
 
       const result = await useCase.execute(input);
 
       expect(result.shippingCost).toBe(0);
       expect(result.estimatedDays).toBe(0);
+      expect(result.originZipCode).toBe(address.zipCode);
       expect(shippingAdapter.calculate).not.toHaveBeenCalled();
       expect(cacheAdapter.get).not.toHaveBeenCalled();
     });

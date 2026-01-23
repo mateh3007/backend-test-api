@@ -73,18 +73,15 @@ describe('UpdateOrderStatusUseCase', () => {
       };
 
       const order = mockOrderEntity(OrderStatusEnum.PENDING);
-      const product = mockProductEntity();
       const updatedOrder = mockOrderEntity(OrderStatusEnum.CONFIRMED);
 
       orderRepository.findById.mockResolvedValue(order);
-      productRepository.findById.mockResolvedValue(product);
-      productRepository.update.mockResolvedValue(product);
       orderRepository.update.mockResolvedValue(updatedOrder);
 
       const result = await useCase.execute(input);
 
       expect(result.status).toBe(OrderStatusEnum.CONFIRMED);
-      expect(productRepository.update).toHaveBeenCalled();
+      expect(productRepository.update).not.toHaveBeenCalled();
     });
 
     it('should throw error if order not found', async () => {
@@ -128,49 +125,39 @@ describe('UpdateOrderStatusUseCase', () => {
       );
     });
 
-    it('should decrement stock when confirming order', async () => {
+    it('should not decrement stock when confirming order (already decremented on creation)', async () => {
       const input: IUpdateOrderStatusInput = {
         id: 'order-123',
         status: OrderStatusEnum.CONFIRMED,
       };
 
       const order = mockOrderEntity(OrderStatusEnum.PENDING);
-      order.productQuantity = 3;
-
-      const product = mockProductEntity();
-      product.stock = 10;
+      const updatedOrder = mockOrderEntity(OrderStatusEnum.CONFIRMED);
 
       orderRepository.findById.mockResolvedValue(order);
-      productRepository.findById.mockResolvedValue(product);
-      productRepository.update.mockImplementation(async (p) => {
-        expect(p.stock).toBe(7); // 10 - 3
-        return p;
-      });
-      orderRepository.update.mockResolvedValue(order);
+      orderRepository.update.mockResolvedValue(updatedOrder);
 
       await useCase.execute(input);
 
-      expect(productRepository.update).toHaveBeenCalled();
+      expect(productRepository.update).not.toHaveBeenCalled();
     });
 
-    it('should throw error if insufficient stock when confirming', async () => {
+    it('should update order status to CONFIRMED without checking stock', async () => {
       const input: IUpdateOrderStatusInput = {
         id: 'order-123',
         status: OrderStatusEnum.CONFIRMED,
       };
 
       const order = mockOrderEntity(OrderStatusEnum.PENDING);
-      order.productQuantity = 15;
-
-      const product = mockProductEntity();
-      product.stock = 10;
+      const updatedOrder = mockOrderEntity(OrderStatusEnum.CONFIRMED);
 
       orderRepository.findById.mockResolvedValue(order);
-      productRepository.findById.mockResolvedValue(product);
+      orderRepository.update.mockResolvedValue(updatedOrder);
 
-      await expect(useCase.execute(input)).rejects.toThrow(
-        'Insufficient stock to confirm order',
-      );
+      const result = await useCase.execute(input);
+
+      expect(result.status).toBe(OrderStatusEnum.CONFIRMED);
+      expect(productRepository.findById).not.toHaveBeenCalled();
     });
 
     it('should restore stock when cancelling confirmed order', async () => {
@@ -219,18 +206,21 @@ describe('UpdateOrderStatusUseCase', () => {
       expect(productRepository.update).not.toHaveBeenCalled();
     });
 
-    it('should throw error if product not found when confirming', async () => {
+    it('should update order status to CONFIRMED successfully', async () => {
       const input: IUpdateOrderStatusInput = {
         id: 'order-123',
         status: OrderStatusEnum.CONFIRMED,
       };
 
       const order = mockOrderEntity(OrderStatusEnum.PENDING);
+      const updatedOrder = mockOrderEntity(OrderStatusEnum.CONFIRMED);
 
       orderRepository.findById.mockResolvedValue(order);
-      productRepository.findById.mockResolvedValue(null);
+      orderRepository.update.mockResolvedValue(updatedOrder);
 
-      await expect(useCase.execute(input)).rejects.toThrow('Product not found');
+      const result = await useCase.execute(input);
+
+      expect(result.status).toBe(OrderStatusEnum.CONFIRMED);
     });
   });
 });

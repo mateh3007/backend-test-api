@@ -101,6 +101,7 @@ model Product {
   price        Decimal    @db.Decimal(10, 2)
   stock        Int        @default(0)
   freeShipping Boolean    @default(false)
+  imageUrl     String?
   sellerId     String
   sellerType   SellerType
   createdAt    DateTime   @default(now())

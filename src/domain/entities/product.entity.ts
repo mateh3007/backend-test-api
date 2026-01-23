@@ -9,6 +9,7 @@ export class ProductEntity extends BaseEntity {
   private _price: number;
   private _stock: number;
   private _freeShipping: boolean;
+  private _imageUrl?: string;
   private _sellerId: string;
   private _sellerType: UserTypeEnum;
 
@@ -41,6 +42,10 @@ export class ProductEntity extends BaseEntity {
     return this._freeShipping;
   }
 
+  get imageUrl(): string | undefined {
+    return this._imageUrl;
+  }
+
   get sellerId(): string {
     return this._sellerId;
   }
@@ -71,6 +76,10 @@ export class ProductEntity extends BaseEntity {
 
   set freeShipping(freeShipping: boolean) {
     this._freeShipping = freeShipping;
+  }
+
+  set imageUrl(imageUrl: string | undefined) {
+    this._imageUrl = imageUrl;
   }
 
   set sellerId(sellerId: string) {

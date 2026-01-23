@@ -14,6 +14,7 @@ interface IProductWithLinks {
   price: number;
   stock: number;
   freeShipping: boolean;
+  imageUrl?: string;
   sellerId: string;
   sellerType: string;
   createdAt?: Date;

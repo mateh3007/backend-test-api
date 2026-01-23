@@ -8,6 +8,7 @@ export interface ICreateProductInput {
   price: number;
   stock: number;
   freeShipping: boolean;
+  imageUrl?: string;
   sellerId: string;
   sellerType: UserTypeEnum;
 }
@@ -45,6 +46,7 @@ export interface IProductOutput {
   price: number;
   stock: number;
   freeShipping: boolean;
+  imageUrl?: string;
   sellerId: string;
   sellerType: UserTypeEnum;
   createdAt: Date;

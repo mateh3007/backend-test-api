@@ -61,6 +61,14 @@ export class CreateProductDto {
   })
   @IsBoolean()
   freeShipping: boolean;
+
+  @ApiPropertyOptional({
+    description: 'URL da imagem do produto',
+    example: 'https://example.com/images/product.jpg',
+  })
+  @IsString()
+  @IsOptional()
+  imageUrl?: string;
 }
 
 export class UpdateProductDto {
@@ -116,6 +124,14 @@ export class UpdateProductDto {
   @IsBoolean()
   @IsOptional()
   freeShipping?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'URL da imagem do produto',
+    example: 'https://example.com/images/product.jpg',
+  })
+  @IsString()
+  @IsOptional()
+  imageUrl?: string;
 }
 
 export class ListProductsQueryDto {

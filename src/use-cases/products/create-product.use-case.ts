@@ -32,6 +32,7 @@ export class CreateProductUseCase extends BaseUseCase<
     product.price = input.price;
     product.stock = input.stock;
     product.freeShipping = input.freeShipping;
+    product.imageUrl = input.imageUrl;
     product.sellerId = input.sellerId;
     product.sellerType = input.sellerType;
 
@@ -56,6 +57,7 @@ export class CreateProductUseCase extends BaseUseCase<
       price: createdProduct.price,
       stock: createdProduct.stock,
       freeShipping: createdProduct.freeShipping,
+      imageUrl: createdProduct.imageUrl,
       sellerId: createdProduct.sellerId,
       sellerType: createdProduct.sellerType,
       createdAt: createdProduct._createdAt,

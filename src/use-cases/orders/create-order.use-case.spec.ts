@@ -1,13 +1,16 @@
 import { CreateOrderUseCase } from './create-order.use-case';
-import { OrderRepository, ProductRepository } from '../../domain/repositories';
-import { OrderEntity, ProductEntity } from '../../domain/entities';
-import { CategoryEnum, OrderStatusEnum, UserTypeEnum } from '../../domain/enum';
+import { AddressRepository, OrderRepository, ProductRepository } from '../../domain/repositories';
+import { AddressEntity, OrderEntity, ProductEntity } from '../../domain/entities';
+import { AddressableEnum, CategoryEnum, OrderStatusEnum, UserTypeEnum } from '../../domain/enum';
 import { ICreateOrderInput } from '../../domain/interfaces';
+import { ShippingAdapter } from '../../domain/adapters';
 
 describe('CreateOrderUseCase', () => {
   let useCase: CreateOrderUseCase;
   let orderRepository: jest.Mocked<OrderRepository>;
   let productRepository: jest.Mocked<ProductRepository>;
+  let addressRepository: jest.Mocked<AddressRepository>;
+  let shippingAdapter: jest.Mocked<ShippingAdapter>;
 
   const mockProductEntity = (): ProductEntity => {
     const product = new ProductEntity({});
@@ -41,6 +44,20 @@ describe('CreateOrderUseCase', () => {
     return order;
   };
 
+  const mockAddressEntity = (): AddressEntity => {
+    const address = new AddressEntity({});
+    address._id = 'address-123';
+    address.country = 'Brazil';
+    address.state = 'SP';
+    address.city = 'São Paulo';
+    address.street = 'Av. Paulista';
+    address.number = '1000';
+    address.zipCode = '01310-100';
+    address.addressableId = 'seller-123';
+    address.addressableType = AddressableEnum.COMPANY;
+    return address;
+  };
+
   beforeEach(() => {
     orderRepository = {
       findById: jest.fn(),
@@ -60,7 +77,25 @@ describe('CreateOrderUseCase', () => {
       findByFilter: jest.fn(),
     } as jest.Mocked<ProductRepository>;
 
-    useCase = new CreateOrderUseCase(orderRepository, productRepository);
+    addressRepository = {
+      findById: jest.fn(),
+      findAll: jest.fn(),
+      create: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+      findByAddressableIdAndType: jest.fn(),
+    } as jest.Mocked<AddressRepository>;
+
+    shippingAdapter = {
+      calculate: jest.fn(),
+    } as jest.Mocked<ShippingAdapter>;
+
+    useCase = new CreateOrderUseCase(
+      orderRepository,
+      productRepository,
+      addressRepository,
+      shippingAdapter,
+    );
   });
 
   describe('execute', () => {
@@ -68,35 +103,38 @@ describe('CreateOrderUseCase', () => {
       const input: ICreateOrderInput = {
         productId: 'product-123',
         productQuantity: 2,
-        shippingCost: 10,
-        sellerId: 'seller-123',
-        sellerType: UserTypeEnum.COMPANY,
+        destinationZipCode: '04567-000',
         buyerId: 'buyer-456',
       };
 
       const product = mockProductEntity();
+      product.freeShipping = false;
+      const address = mockAddressEntity();
       const createdOrder = mockOrderEntity();
 
       productRepository.findById.mockResolvedValue(product);
+      addressRepository.findByAddressableIdAndType.mockResolvedValue(address);
+      shippingAdapter.calculate.mockResolvedValue({ cost: 10, estimatedDays: 5, carrier: 'SEDEX' });
+      productRepository.update.mockResolvedValue(product);
       orderRepository.create.mockResolvedValue(createdOrder);
 
       const result = await useCase.execute(input);
 
       expect(productRepository.findById).toHaveBeenCalledWith('product-123');
+      expect(addressRepository.findByAddressableIdAndType).toHaveBeenCalled();
+      expect(shippingAdapter.calculate).toHaveBeenCalled();
       expect(orderRepository.create).toHaveBeenCalled();
+      expect(productRepository.update).toHaveBeenCalled();
       expect(result.id).toBe('order-123');
       expect(result.productId).toBe(input.productId);
       expect(result.productQuantity).toBe(input.productQuantity);
-      expect(result.shippingCost).toBe(input.shippingCost);
     });
 
     it('should throw error if product not found', async () => {
       const input: ICreateOrderInput = {
         productId: 'non-existent',
         productQuantity: 2,
-        shippingCost: 10,
-        sellerId: 'seller-123',
-        sellerType: UserTypeEnum.COMPANY,
+        destinationZipCode: '04567-000',
         buyerId: 'buyer-456',
       };
 
@@ -110,9 +148,7 @@ describe('CreateOrderUseCase', () => {
       const input: ICreateOrderInput = {
         productId: 'product-123',
         productQuantity: 100,
-        shippingCost: 10,
-        sellerId: 'seller-123',
-        sellerType: UserTypeEnum.COMPANY,
+        destinationZipCode: '04567-000',
         buyerId: 'buyer-456',
       };
 
@@ -131,18 +167,21 @@ describe('CreateOrderUseCase', () => {
       const input: ICreateOrderInput = {
         productId: 'product-123',
         productQuantity: 3,
-        shippingCost: 15,
-        sellerId: 'seller-123',
-        sellerType: UserTypeEnum.COMPANY,
+        destinationZipCode: '04567-000',
         buyerId: 'buyer-456',
       };
 
       const product = mockProductEntity();
       product.price = 100;
+      product.freeShipping = false;
+      const address = mockAddressEntity();
 
       const expectedTotalPrice = 100 * 3 + 15; // 315
 
       productRepository.findById.mockResolvedValue(product);
+      addressRepository.findByAddressableIdAndType.mockResolvedValue(address);
+      shippingAdapter.calculate.mockResolvedValue({ cost: 15, estimatedDays: 5, carrier: 'SEDEX' });
+      productRepository.update.mockResolvedValue(product);
       orderRepository.create.mockImplementation(async (order) => {
         expect(order.totalPrice).toBe(expectedTotalPrice);
         return order;
@@ -157,15 +196,17 @@ describe('CreateOrderUseCase', () => {
       const input: ICreateOrderInput = {
         productId: 'product-123',
         productQuantity: 1,
-        shippingCost: 0,
-        sellerId: 'seller-123',
-        sellerType: UserTypeEnum.COMPANY,
+        destinationZipCode: '04567-000',
         buyerId: 'buyer-456',
       };
 
       const product = mockProductEntity();
+      product.freeShipping = true;
+      const address = mockAddressEntity();
 
       productRepository.findById.mockResolvedValue(product);
+      addressRepository.findByAddressableIdAndType.mockResolvedValue(address);
+      productRepository.update.mockResolvedValue(product);
       orderRepository.create.mockImplementation(async (order) => {
         expect(order.status).toBe(OrderStatusEnum.PENDING);
         return order;

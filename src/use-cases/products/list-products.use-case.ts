@@ -79,6 +79,7 @@ export class ListProductsUseCase extends BaseUseCase<
         price: product.price,
         stock: product.stock,
         freeShipping: product.freeShipping,
+        imageUrl: product.imageUrl,
         sellerId: product.sellerId,
         sellerType: product.sellerType,
         createdAt: product._createdAt,

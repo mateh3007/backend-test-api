@@ -54,6 +54,10 @@ export class UpdateProductUseCase extends BaseUseCase<
       product.freeShipping = input.freeShipping;
     }
 
+    if (input.imageUrl !== undefined) {
+      product.imageUrl = input.imageUrl;
+    }
+
     const updatedProduct = await this.productRepository.update(product);
 
     this.logger.log(`✏️ Product updated: ${updatedProduct._id}`);
@@ -75,6 +79,7 @@ export class UpdateProductUseCase extends BaseUseCase<
       price: updatedProduct.price,
       stock: updatedProduct.stock,
       freeShipping: updatedProduct.freeShipping,
+      imageUrl: updatedProduct.imageUrl,
       sellerId: updatedProduct.sellerId,
       sellerType: updatedProduct.sellerType,
       updatedAt: updatedProduct._updatedAt,

@@ -28,6 +28,7 @@ export class ProductPrismaRepository
     product.price = Number(prismaModel.price);
     product.stock = prismaModel.stock;
     product.freeShipping = prismaModel.freeShipping;
+    product.imageUrl = prismaModel.imageUrl ?? undefined;
     product.sellerId = prismaModel.sellerId;
     product.sellerType = prismaModel.sellerType as UserTypeEnum;
     product._createdAt = prismaModel.createdAt;
@@ -44,6 +45,7 @@ export class ProductPrismaRepository
       price: new PrismaClient.Decimal(entity.price),
       stock: entity.stock,
       freeShipping: entity.freeShipping,
+      imageUrl: entity.imageUrl,
       sellerId: entity.sellerId,
       sellerType: entity.sellerType,
     };

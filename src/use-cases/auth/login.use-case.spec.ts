@@ -1,6 +1,6 @@
 import { LoginUseCase } from './login.use-case';
 import { UserRepository } from '../../domain/repositories';
-import { BcryptAdapter, JwtAdapter } from '../../domain/adapters';
+import { BcryptAdapter, CacheAdapter, JwtAdapter } from '../../domain/adapters';
 import { UserEntity } from '../../domain/entities';
 import { RoleEnum, StepOnboardingEnum } from '../../domain/enum';
 
@@ -9,6 +9,7 @@ describe('LoginUseCase', () => {
   let mockUserRepository: jest.Mocked<UserRepository>;
   let mockBcryptAdapter: jest.Mocked<BcryptAdapter>;
   let mockJwtAdapter: jest.Mocked<JwtAdapter>;
+  let mockCacheAdapter: jest.Mocked<CacheAdapter>;
 
   const mockUser = (): UserEntity => {
     const user = new UserEntity({});
@@ -41,10 +42,18 @@ describe('LoginUseCase', () => {
       verify: jest.fn(),
     } as jest.Mocked<JwtAdapter>;
 
+    mockCacheAdapter = {
+      get: jest.fn(),
+      set: jest.fn(),
+      delete: jest.fn(),
+      deleteByPattern: jest.fn(),
+    } as jest.Mocked<CacheAdapter>;
+
     loginUseCase = new LoginUseCase(
       mockUserRepository,
       mockBcryptAdapter,
       mockJwtAdapter,
+      mockCacheAdapter,
     );
   });
 
@@ -53,9 +62,11 @@ describe('LoginUseCase', () => {
       const user = mockUser();
       const input = { email: 'john@example.com', password: 'password123' };
 
+      mockCacheAdapter.get.mockResolvedValue(null);
       mockUserRepository.findByFilter.mockResolvedValue([user]);
       mockBcryptAdapter.compare.mockResolvedValue(true);
       mockJwtAdapter.sign.mockResolvedValue('jwt-token-123');
+      mockCacheAdapter.set.mockResolvedValue();
 
       const result = await loginUseCase.execute(input);
 
@@ -89,9 +100,11 @@ describe('LoginUseCase', () => {
       user.companyId = 'company-id-123';
       const input = { email: 'john@example.com', password: 'password123' };
 
+      mockCacheAdapter.get.mockResolvedValue(null);
       mockUserRepository.findByFilter.mockResolvedValue([user]);
       mockBcryptAdapter.compare.mockResolvedValue(true);
       mockJwtAdapter.sign.mockResolvedValue('jwt-token-123');
+      mockCacheAdapter.set.mockResolvedValue();
 
       const result = await loginUseCase.execute(input);
 
@@ -104,6 +117,7 @@ describe('LoginUseCase', () => {
         password: 'password123',
       };
 
+      mockCacheAdapter.get.mockResolvedValue(null);
       mockUserRepository.findByFilter.mockResolvedValue([]);
 
       await expect(loginUseCase.execute(input)).rejects.toThrow(
@@ -117,6 +131,7 @@ describe('LoginUseCase', () => {
       const user = mockUser();
       const input = { email: 'john@example.com', password: 'wrong-password' };
 
+      mockCacheAdapter.get.mockResolvedValue(null);
       mockUserRepository.findByFilter.mockResolvedValue([user]);
       mockBcryptAdapter.compare.mockResolvedValue(false);
 
@@ -134,12 +149,14 @@ describe('LoginUseCase', () => {
       const user = mockUser();
 
       // Test invalid email
+      mockCacheAdapter.get.mockResolvedValue(null);
       mockUserRepository.findByFilter.mockResolvedValue([]);
       await expect(
         loginUseCase.execute({ email: 'invalid@email.com', password: 'pass' }),
       ).rejects.toThrow('Invalid credentials');
 
       // Test invalid password
+      mockCacheAdapter.get.mockResolvedValue(null);
       mockUserRepository.findByFilter.mockResolvedValue([user]);
       mockBcryptAdapter.compare.mockResolvedValue(false);
       await expect(
@@ -153,9 +170,11 @@ describe('LoginUseCase', () => {
       user.stepOnboarding = StepOnboardingEnum.ADDRESS;
       const input = { email: 'john@example.com', password: 'password123' };
 
+      mockCacheAdapter.get.mockResolvedValue(null);
       mockUserRepository.findByFilter.mockResolvedValue([user]);
       mockBcryptAdapter.compare.mockResolvedValue(true);
       mockJwtAdapter.sign.mockResolvedValue('jwt-token-123');
+      mockCacheAdapter.set.mockResolvedValue();
 
       const result = await loginUseCase.execute(input);
 
