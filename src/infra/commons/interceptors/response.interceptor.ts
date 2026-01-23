@@ -3,6 +3,7 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
+  StreamableFile,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -19,40 +20,31 @@ export interface IApiResponse<T> {
 export class ResponseInterceptor<T>
   implements NestInterceptor<T, IApiResponse<T>>
 {
-  intercept(
-    context: ExecutionContext,
-    next: CallHandler,
-  ): Observable<IApiResponse<T>> {
-    const ctx = context.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const request = ctx.getRequest();
-
-    const url = request.url ?? '';
-
-    if (
-      url.startsWith('/api/docs') ||
-      url.startsWith('/api/health')
-    ) {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    const request = context.switchToHttp().getRequest();
+    const url = request.url;
+  
+    if (url.includes('api/docs') || url.includes('favicon.ico')) {
       return next.handle();
     }
-
+  
     return next.handle().pipe(
       map((data) => {
-        const contentType = response.getHeader('content-type');
-
-        if (
-          typeof contentType === 'string' &&
-          !contentType.includes('application/json')
-        ) {
+        const response = context.switchToHttp().getResponse();
+        
+        if (data instanceof StreamableFile || !data) {
           return data;
         }
-
+  
+        if (url.endsWith('-json')) {
+          return data;
+        }
+  
         return {
           success: true,
           data,
           timestamp: new Date().toISOString(),
-          path: request.url,
-          statusCode: response.statusCode,
+          path: url,
         };
       }),
     );
