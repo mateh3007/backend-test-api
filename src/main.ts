@@ -15,9 +15,6 @@ async function bootstrap() {
   const logger = app.get(AppLoggerService);
   app.useLogger(logger);
 
-  // Security headers
-  app.use(helmet());
-
   // CORS configuration
   const corsOrigin = process.env.CORS_ORIGIN || '*';
   app.enableCors({
